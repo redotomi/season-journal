@@ -1,24 +1,65 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import "../global.css";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import {
+	Lora_400Regular,
+	Lora_400Regular_Italic,
+	Lora_600SemiBold,
+	Lora_700Bold,
+} from "@expo-google-fonts/lora";
+import {
+	Nunito_400Regular,
+	Nunito_500Medium,
+	Nunito_600SemiBold,
+	Nunito_700Bold,
+} from "@expo-google-fonts/nunito";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
+
+import { JournalColors } from "@/constants/theme";
+
+SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+	anchor: "(tabs)",
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+	const [fontsLoaded] = useFonts({
+		Lora_400Regular,
+		Lora_400Regular_Italic,
+		Lora_600SemiBold,
+		Lora_700Bold,
+		Nunito_400Regular,
+		Nunito_500Medium,
+		Nunito_600SemiBold,
+		Nunito_700Bold,
+	});
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+	useEffect(() => {
+		if (fontsLoaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
+
+	if (!fontsLoaded) {
+		return null;
+	}
+
+	return (
+		<>
+			<Stack
+				screenOptions={{
+					headerShown: false,
+					contentStyle: { backgroundColor: JournalColors.parchment },
+				}}
+			>
+				<Stack.Screen name="(tabs)" />
+			</Stack>
+			<StatusBar style="dark" />
+		</>
+	);
 }

@@ -1,35 +1,51 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import { Grid3X3, Heart, TrendingUp } from "lucide-react-native";
+import { useCallback } from "react";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import JournalTabBar from "@/components/journal-tab-bar";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+	const renderTabBar = useCallback(
+		(props: React.ComponentProps<typeof JournalTabBar>) => (
+			<JournalTabBar {...props} />
+		),
+		[]
+	);
 
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+	return (
+		<Tabs
+			tabBar={renderTabBar}
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			<Tabs.Screen
+				name="index"
+				options={{
+					title: "Bingo",
+					tabBarIcon: ({ color, size }) => (
+						<Grid3X3 color={color} size={size} strokeWidth={1.5} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="tracking"
+				options={{
+					title: "Tracking",
+					tabBarIcon: ({ color, size }) => (
+						<TrendingUp color={color} size={size} strokeWidth={1.5} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="favourites"
+				options={{
+					title: "Favourites",
+					tabBarIcon: ({ color, size }) => (
+						<Heart color={color} size={size} strokeWidth={1.5} />
+					),
+				}}
+			/>
+		</Tabs>
+	);
 }

@@ -1,50 +1,97 @@
-# Welcome to your Expo app 👋
+<div align="center">
+  <h1>🏎️ Season Journal</h1>
+  <p>A beautiful, functional, and deeply personalized Formula 1 companion app built with React Native and Expo.</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+  <!-- Badges -->
+  <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
+  <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+</div>
 
-## Get started
+<hr />
 
-1. Install dependencies
+## 📋 Table of Contents
 
+- [🌟 Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [📂 Project Structure](#-project-structure)
+- [📜 Available Scripts](#-available-scripts)
+- [🤝 Contributing](#-contributing)
+
+## 🌟 Features
+
+Season Journal brings the thrill of the grid to your fingertips with a suite of interactive and tracking features:
+
+1. **🎯 Race Predictions Bingo:** An interactive bingo board for making and tracking your race weekend predictions. Includes a rich canvas editor to customize your bingo cards with text and images!
+2. **🏆 Championship Tracking:** Keep a close eye on the pulse of the season. Track the standings for both the World Drivers' Championship and the Constructors' Championship.
+3. **⭐ Favourites:** Curate your personal F1 experience. Save your favourite drivers and teams to access their stats and information quickly.
+4. **✨ Glassy UI Aesthetics:** A premium, modern, and aesthetically pleasing interface matching the high-speed, high-tech nature of the sport, completely styled with NativeWind.
+
+## 🛠️ Tech Stack
+
+This project was developed focusing on **React Native Best Practices**, emphasizing modularity, performance, and type safety.
+
+- **Framework:** [React Native](https://reactnative.dev/) with [Expo](https://expo.dev/) (SDK 54)
+- **Routing:** [Expo Router](https://docs.expo.dev/router/introduction/) (File-based navigation)
+- **Styling:** [NativeWind](https://www.nativewind.dev/) (Tailwind CSS for React Native)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Icons:** [Lucide React Native](https://lucide.dev/icons/)
+- **Animations:** [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+
+## 🚀 Getting Started
+
+Follow these steps to get the project up and running on your local machine.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or newer recommended)
+- [pnpm](https://pnpm.io/) (Package manager)
+- Expo Go app on your physical device, or an iOS/Android simulator.
+
+### Installation
+
+1. Clone the repository:
    ```bash
-   npm install
+   git clone https://github.com/redotomi/season-journal.git
+   cd season-journal
    ```
 
-2. Start the app
-
+2. Install the dependencies using `pnpm`:
    ```bash
-   npx expo start
+   pnpm install
    ```
 
-In the output, you'll find options to open the app in a
+3. Start the development server:
+   ```bash
+   pnpm start
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📂 Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+season-journal/
+├── app/             # Expo Router file-based routing configuration
+│   └── (tabs)/      # Bottom tab navigation (Bingo, Tracking, Favourites)
+├── components/      # Reusable UI components and complex features
+│   ├── bingo/       # Bingo grid and canvas editor modal components
+│   ├── screens/     # Screen-level components (Drivers, Constructors)
+│   └── ui/          # Generic atomic UI components
+├── constants/       # Global constants, like theme colors and fonts
+├── assets/          # Static assets (images, fonts)
+└── scripts/         # Utility scripts for project management
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📜 Available Scripts
 
-## Learn more
+- `pnpm start`: Starts the Expo development server.
+- `pnpm run android`: Starts the app directly in the Android Emulator.
+- `pnpm run ios`: Starts the app directly in the iOS Simulator.
+- `pnpm run web`: Starts the app in the web browser.
+- `pnpm run lint`: Runs ESLint to find and fix problems in the code.
+- `pnpm run reset-project`: Resets the project to a clean slate (useful for templates).
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🤝 Contributing
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Contributions are always welcome! Feel free to open an issue or submit a pull request if you have ideas for improvements or find any bugs.

@@ -1,8 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
+import type { CanvasState } from "@/components/bingo/canvas/canvas-types";
+
 export type BingoCell = {
 	checked: boolean;
 	imageUri: string | null;
+	canvasState: CanvasState | null;
 };
 
 const GRID_SIZE = 16;
@@ -11,6 +14,7 @@ const createInitialCells = (): BingoCell[] =>
 	Array.from({ length: GRID_SIZE }, () => ({
 		checked: false,
 		imageUri: null,
+		canvasState: null,
 	}));
 
 export function useBingoState() {
@@ -29,13 +33,18 @@ export function useBingoState() {
 		);
 	}, []);
 
-	const editCell = useCallback((index: number, uri: string) => {
-		setCells((prev) =>
-			prev.map((cell, i) =>
-				i === index ? { ...cell, imageUri: uri } : cell
-			)
-		);
-	}, []);
+	const editCell = useCallback(
+		(index: number, uri: string, canvasState: CanvasState) => {
+			setCells((prev) =>
+				prev.map((cell, i) =>
+					i === index
+						? { ...cell, imageUri: uri, canvasState }
+						: cell
+				)
+			);
+		},
+		[]
+	);
 
 	return { cells, checkedCount, total: GRID_SIZE, toggleCheck, editCell };
 }

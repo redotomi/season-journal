@@ -28,7 +28,13 @@ export type CanvasAction = {
 	id: string;
 };
 
-export type ToolMode = "draw" | "text" | "image" | null;
+export type ToolMode = "draw" | "text" | "image" | "hand" | null;
+
+export type CanvasState = {
+	paths: DrawPath[];
+	texts: CanvasText[];
+	images: CanvasImage[];
+};
 
 export const CANVAS_COLORS = [
 	"#1C1C2E",

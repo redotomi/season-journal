@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
-import { Undo2, X } from "lucide-react-native";
-import { useCallback, useRef, useState } from "react";
+import { Trash2, Undo2, X } from "lucide-react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	Alert,
 	Dimensions,
@@ -15,25 +15,36 @@ import ViewShot from "react-native-view-shot";
 import { Colors, Fonts } from "@/constants/theme";
 import { useCanvasEditor } from "@/hooks/use-canvas-editor";
 import CanvasToolbar from "./canvas-toolbar";
-import type { ToolMode } from "./canvas-types";
+import type { CanvasState, ToolMode } from "./canvas-types";
 import DraggableImage from "./draggable-image";
 import DraggableText from "./draggable-text";
 import DrawingLayer from "./drawing-layer";
 
 type Props = {
 	visible: boolean;
-	onSave: (uri: string) => void;
+	initialState: CanvasState | null;
+	onSave: (uri: string, canvasState: CanvasState) => void;
 	onCancel: () => void;
 };
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CANVAS_SIZE = SCREEN_WIDTH - 48;
 
-export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) {
+export default function CanvasEditorModal({ visible, initialState, onSave, onCancel }: Props) {
 	const editor = useCanvasEditor();
 	const viewShotRef = useRef<ViewShot>(null);
 	const [textInput, setTextInput] = useState("");
 	const [showTextInput, setShowTextInput] = useState(false);
+	const [isDragging, setIsDragging] = useState(false);
+	const [isOverTrash, setIsOverTrash] = useState(false);
+	const trashRef = useRef<View>(null);
+	const trashLayoutRef = useRef({ y: 0, height: 0 });
+
+	useEffect(() => {
+		if (visible) {
+			editor.loadState(initialState);
+		}
+	}, [visible]);
 
 	const handleToolChange = useCallback(
 		(tool: ToolMode) => {
@@ -72,12 +83,6 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 		}
 	}, [editor]);
 
-	const handleCanvasTap = useCallback(() => {
-		if (editor.activeTool === "text") {
-			setShowTextInput(true);
-		}
-	}, [editor.activeTool]);
-
 	const handleTextSubmit = useCallback(() => {
 		if (textInput.trim()) {
 			editor.addText(
@@ -95,7 +100,8 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 		try {
 			if (viewShotRef.current?.capture) {
 				const uri = await viewShotRef.current.capture();
-				onSave(uri);
+				const state = editor.getState();
+				onSave(uri, state);
 				editor.clear();
 			}
 		} catch {
@@ -107,6 +113,42 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 		editor.clear();
 		onCancel();
 	}, [editor, onCancel]);
+
+	const handleDragStart = useCallback(() => {
+		setIsDragging(true);
+		setIsOverTrash(false);
+	}, []);
+
+	const handleDragMove = useCallback((pageY: number) => {
+		const { y, height } = trashLayoutRef.current;
+		if (y > 0) {
+			setIsOverTrash(pageY >= y && pageY <= y + height);
+		}
+	}, []);
+
+	const handleDragEnd = useCallback(
+		(id: string, type: "text" | "image", pageY: number) => {
+			setIsDragging(false);
+			setIsOverTrash(false);
+			const { y, height } = trashLayoutRef.current;
+			if (y > 0 && pageY >= y && pageY <= y + height) {
+				if (type === "text") {
+					editor.removeText(id);
+				} else {
+					editor.removeImage(id);
+				}
+			}
+		},
+		[editor]
+	);
+
+	const handleTrashLayout = useCallback(() => {
+		trashRef.current?.measureInWindow((_x, y, _w, h) => {
+			trashLayoutRef.current = { y, height: h };
+		});
+	}, []);
+
+	const isHandActive = editor.activeTool === "hand";
 
 	return (
 		<Modal
@@ -215,7 +257,11 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 								<DraggableImage
 									key={img.id}
 									item={img}
+									isHandActive={isHandActive}
 									onUpdate={editor.updateImage}
+									onDragStart={handleDragStart}
+									onDragEnd={handleDragEnd}
+									onDragMove={handleDragMove}
 								/>
 							))}
 
@@ -224,7 +270,11 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 								<DraggableText
 									key={t.id}
 									item={t}
+									isHandActive={isHandActive}
 									onUpdate={editor.updateText}
+									onDragStart={handleDragStart}
+									onDragEnd={handleDragEnd}
+									onDragMove={handleDragMove}
 								/>
 							))}
 
@@ -238,6 +288,55 @@ export default function CanvasEditorModal({ visible, onSave, onCancel }: Props) 
 						</View>
 					</ViewShot>
 				</View>
+
+				{/* Trash zone — absolutely positioned, no layout shift */}
+				{isDragging ? (
+					<View
+						ref={trashRef}
+						onLayout={handleTrashLayout}
+						style={{
+							position: "absolute",
+							bottom: 100,
+							left: 24,
+							right: 24,
+							height: 56,
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
+						<View
+							className="flex-row items-center justify-center"
+							style={{
+								backgroundColor: isOverTrash
+									? "#E53935"
+									: "#FDEAEA",
+								borderRadius: 14,
+								paddingVertical: 10,
+								paddingHorizontal: 20,
+								gap: 8,
+								width: "100%",
+								transform: [
+									{ scale: isOverTrash ? 1.05 : 1 },
+								],
+							}}
+						>
+							<Trash2
+								color={isOverTrash ? "#FFFFFF" : "#E53935"}
+								size={20}
+								strokeWidth={1.5}
+							/>
+							<Text
+								style={{
+									fontFamily: Fonts.bodySemiBold,
+									fontSize: 14,
+									color: isOverTrash ? "#FFFFFF" : "#E53935",
+								}}
+							>
+								Drop here to delete
+							</Text>
+						</View>
+					</View>
+				) : null}
 
 				{/* Text input overlay */}
 				{showTextInput ? (

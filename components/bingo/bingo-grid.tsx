@@ -5,6 +5,7 @@ import { useBingoState } from "@/hooks/use-bingo-state";
 import BingoCell from "./bingo-cell";
 import BingoProgressBar from "./bingo-progress-bar";
 import CanvasEditorModal from "./canvas/canvas-editor-modal";
+import type { CanvasState } from "./canvas/canvas-types";
 
 const COLS = 4;
 
@@ -36,9 +37,9 @@ export default function BingoGrid() {
 	}, []);
 
 	const handleCanvasSave = useCallback(
-		(uri: string) => {
+		(uri: string, canvasState: CanvasState) => {
 			if (canvasCellIndex !== null) {
-				editCell(canvasCellIndex, uri);
+				editCell(canvasCellIndex, uri, canvasState);
 			}
 			setCanvasCellIndex(null);
 		},
@@ -96,6 +97,11 @@ export default function BingoGrid() {
 
 			<CanvasEditorModal
 				visible={canvasCellIndex !== null}
+				initialState={
+					canvasCellIndex !== null
+						? cells[canvasCellIndex].canvasState
+						: null
+				}
 				onSave={handleCanvasSave}
 				onCancel={handleCanvasCancel}
 			/>

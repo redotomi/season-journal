@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import type {
 	CanvasAction,
 	CanvasImage,
+	CanvasState,
 	CanvasText,
 	DrawPath,
 	ToolMode,
@@ -87,6 +88,16 @@ export function useCanvasEditor() {
 		});
 	}, []);
 
+	const removeText = useCallback((id: string) => {
+		setTexts((prev) => prev.filter((t) => t.id !== id));
+		setUndoStack((prev) => prev.filter((a) => a.id !== id));
+	}, []);
+
+	const removeImage = useCallback((id: string) => {
+		setImages((prev) => prev.filter((i) => i.id !== id));
+		setUndoStack((prev) => prev.filter((a) => a.id !== id));
+	}, []);
+
 	const clear = useCallback(() => {
 		setPaths([]);
 		setTexts([]);
@@ -95,6 +106,31 @@ export function useCanvasEditor() {
 		setActiveTool("draw");
 		setSelectedColor(CANVAS_COLORS[0]);
 	}, []);
+
+	const loadState = useCallback((state: CanvasState | null) => {
+		if (state) {
+			setPaths(state.paths);
+			setTexts(state.texts);
+			setImages(state.images);
+			const actions: CanvasAction[] = [
+				...state.paths.map((p) => ({ type: "draw" as const, id: p.id })),
+				...state.texts.map((t) => ({ type: "text" as const, id: t.id })),
+				...state.images.map((i) => ({ type: "image" as const, id: i.id })),
+			];
+			setUndoStack(actions);
+		} else {
+			setPaths([]);
+			setTexts([]);
+			setImages([]);
+			setUndoStack([]);
+		}
+		setActiveTool("draw");
+		setSelectedColor(CANVAS_COLORS[0]);
+	}, []);
+
+	const getState = useCallback((): CanvasState => {
+		return { paths, texts, images };
+	}, [paths, texts, images]);
 
 	return {
 		paths,
@@ -110,7 +146,11 @@ export function useCanvasEditor() {
 		addImage,
 		updateText,
 		updateImage,
+		removeText,
+		removeImage,
 		undo,
 		clear,
+		loadState,
+		getState,
 	};
 }

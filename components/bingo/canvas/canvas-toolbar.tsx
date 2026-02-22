@@ -1,4 +1,4 @@
-import { Image as ExpoImage, Pencil, Type } from "lucide-react-native";
+import { Image as ExpoImage, Hand, Pencil, Type } from "lucide-react-native";
 import { memo, useCallback } from "react";
 import { Pressable, View } from "react-native";
 
@@ -14,6 +14,7 @@ type Props = {
 };
 
 const TOOLS: { mode: ToolMode; Icon: typeof Pencil }[] = [
+	{ mode: "hand", Icon: Hand },
 	{ mode: "draw", Icon: Pencil },
 	{ mode: "text", Icon: Type },
 	{ mode: "image", Icon: ExpoImage },

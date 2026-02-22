@@ -1,61 +1,67 @@
 import { Heart } from "lucide-react-native";
 import { Text, View } from "react-native";
 
-import { JournalColors, JournalFonts } from "@/constants/theme";
+import { Colors, Fonts } from "@/constants/theme";
 
 export default function FavouriteTeamScreen() {
 	return (
 		<View
-			className="flex-1 items-center justify-center px-8"
-			style={{ backgroundColor: JournalColors.parchment }}
+			className="flex-1 px-5 pt-8"
+			style={{ backgroundColor: Colors.background }}
 		>
 			<View
 				style={{
+					backgroundColor: Colors.surfaceSolid,
+					borderRadius: 24,
+					padding: 32,
 					alignItems: "center",
-					transform: [{ rotate: "1deg" }],
+					shadowColor: "#000",
+					shadowOffset: { width: 0, height: 4 },
+					shadowOpacity: 0.06,
+					shadowRadius: 16,
+					elevation: 4,
 				}}
 			>
-				<Heart
-					color={JournalColors.rose}
-					size={48}
-					strokeWidth={1.2}
-					fill={JournalColors.rose}
-				/>
+				<View
+					style={{
+						width: 72,
+						height: 72,
+						borderRadius: 18,
+						backgroundColor: "#F5ECEC",
+						alignItems: "center",
+						justifyContent: "center",
+						marginBottom: 20,
+					}}
+				>
+					<Heart
+						color={Colors.rose}
+						size={32}
+						strokeWidth={1.5}
+						fill={Colors.rose}
+					/>
+				</View>
 
 				<Text
 					style={{
-						fontFamily: JournalFonts.display,
-						fontSize: 36,
-						color: JournalColors.ink,
-						marginTop: 16,
+						fontFamily: Fonts.displayMedium,
+						fontSize: 20,
+						color: Colors.textPrimary,
+						marginBottom: 8,
 					}}
 				>
 					Favourite Team
 				</Text>
 
-				<View
-					style={{
-						width: 60,
-						height: 3,
-						backgroundColor: JournalColors.rose,
-						borderRadius: 2,
-						marginTop: 8,
-						marginBottom: 20,
-						transform: [{ rotate: "-2deg" }],
-						opacity: 0.5,
-					}}
-				/>
-
 				<Text
 					style={{
-						fontFamily: JournalFonts.body,
-						fontSize: 15,
-						color: JournalColors.inkLight,
+						fontFamily: Fonts.body,
+						fontSize: 14,
+						color: Colors.textSecondary,
 						textAlign: "center",
-						lineHeight: 22,
+						lineHeight: 20,
 					}}
 				>
-					Pick your favorite constructor{"\n"}and track their progress
+					Pick your favorite constructor and track their progress
 				</Text>
 			</View>
 		</View>

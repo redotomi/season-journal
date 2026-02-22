@@ -9,17 +9,17 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
-				journal: {
-					parchment: "#FFF8F0",
-					cream: "#FEF3E2",
-					ink: "#5C4033",
-					"ink-light": "#8B7355",
+				glass: {
+					bg: "#EEEDF2",
+					surface: "rgba(255,255,255,0.85)",
+					solid: "#FFFFFF",
+					dark: "#1C1C2E",
+					accent: "#E8A838",
+					"accent-soft": "#FFF3DC",
+					border: "rgba(0,0,0,0.06)",
 					rose: "#D4A0A0",
 					sage: "#B5C9A8",
 					sky: "#B8D4E3",
-					sienna: "#C67A5C",
-					muted: "#A89786",
-					line: "#E8DDD0",
 				},
 			},
 			fontFamily: {
@@ -31,6 +31,11 @@ const config: Config = {
 				"nunito-medium": ["Nunito_500Medium"],
 				"nunito-semibold": ["Nunito_600SemiBold"],
 				"nunito-bold": ["Nunito_700Bold"],
+			},
+			borderRadius: {
+				"2xl": "20px",
+				"3xl": "24px",
+				"4xl": "28px",
 			},
 		},
 	},

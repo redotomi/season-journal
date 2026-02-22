@@ -2,12 +2,12 @@ import { Tabs } from "expo-router";
 import { Grid3X3, Heart, TrendingUp } from "lucide-react-native";
 import { useCallback } from "react";
 
-import JournalTabBar from "@/components/journal-tab-bar";
+import GlassyTabBar from "@/components/journal-tab-bar";
 
 export default function TabLayout() {
 	const renderTabBar = useCallback(
-		(props: React.ComponentProps<typeof JournalTabBar>) => (
-			<JournalTabBar {...props} />
+		(props: React.ComponentProps<typeof GlassyTabBar>) => (
+			<GlassyTabBar {...props} />
 		),
 		[]
 	);

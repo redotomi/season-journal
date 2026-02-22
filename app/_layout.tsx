@@ -19,7 +19,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-import { JournalColors } from "@/constants/theme";
+import { Colors } from "@/constants/theme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,7 +54,7 @@ export default function RootLayout() {
 			<Stack
 				screenOptions={{
 					headerShown: false,
-					contentStyle: { backgroundColor: JournalColors.parchment },
+					contentStyle: { backgroundColor: Colors.background },
 				}}
 			>
 				<Stack.Screen name="(tabs)" />

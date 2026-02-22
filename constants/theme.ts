@@ -16,10 +16,10 @@ export const Colors = {
 } as const;
 
 export const Fonts = {
-	display: "Lora_700Bold",
-	displayMedium: "Lora_600SemiBold",
-	displayRegular: "Lora_400Regular",
-	displayItalic: "Lora_400Regular_Italic",
+	display: "Inter_700Bold",
+	displayMedium: "Inter_600SemiBold",
+	displayRegular: "Inter_400Regular",
+	displayItalic: "Inter_400Regular",
 	body: "Nunito_400Regular",
 	bodyMedium: "Nunito_500Medium",
 	bodySemiBold: "Nunito_600SemiBold",

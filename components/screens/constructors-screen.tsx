@@ -36,7 +36,7 @@ export default function ConstructorsScreen() {
 					<TrendingUp
 						color={Colors.sky}
 						size={32}
-						strokeWidth={1.5}
+						strokeWidth={1.25}
 					/>
 				</View>
 

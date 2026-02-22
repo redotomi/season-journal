@@ -1,11 +1,11 @@
 import "../global.css";
 
 import {
-	Lora_400Regular,
-	Lora_400Regular_Italic,
-	Lora_600SemiBold,
-	Lora_700Bold,
-} from "@expo-google-fonts/lora";
+	Inter_400Regular,
+	Inter_500Medium,
+	Inter_600SemiBold,
+	Inter_700Bold,
+} from "@expo-google-fonts/inter";
 import {
 	Nunito_400Regular,
 	Nunito_500Medium,
@@ -29,10 +29,10 @@ export const unstable_settings = {
 
 export default function RootLayout() {
 	const [fontsLoaded] = useFonts({
-		Lora_400Regular,
-		Lora_400Regular_Italic,
-		Lora_600SemiBold,
-		Lora_700Bold,
+		Inter_400Regular,
+		Inter_500Medium,
+		Inter_600SemiBold,
+		Inter_700Bold,
 		Nunito_400Regular,
 		Nunito_500Medium,
 		Nunito_600SemiBold,

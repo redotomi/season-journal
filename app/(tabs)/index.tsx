@@ -57,7 +57,7 @@ export default function BingoScreen() {
 					<Grid3X3
 						color={Colors.accent}
 						size={36}
-						strokeWidth={1.5}
+						strokeWidth={1.25}
 					/>
 				</View>
 

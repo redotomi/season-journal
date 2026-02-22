@@ -24,7 +24,7 @@ export default function TabLayout() {
 				options={{
 					title: "Bingo",
 					tabBarIcon: ({ color, size }) => (
-						<Grid3X3 color={color} size={size} strokeWidth={1.5} />
+						<Grid3X3 color={color} size={size} strokeWidth={1.25} />
 					),
 				}}
 			/>
@@ -33,7 +33,7 @@ export default function TabLayout() {
 				options={{
 					title: "Tracking",
 					tabBarIcon: ({ color, size }) => (
-						<TrendingUp color={color} size={size} strokeWidth={1.5} />
+						<TrendingUp color={color} size={size} strokeWidth={1.25} />
 					),
 				}}
 			/>
@@ -42,7 +42,7 @@ export default function TabLayout() {
 				options={{
 					title: "Favourites",
 					tabBarIcon: ({ color, size }) => (
-						<Heart color={color} size={size} strokeWidth={1.5} />
+						<Heart color={color} size={size} strokeWidth={1.25} />
 					),
 				}}
 			/>

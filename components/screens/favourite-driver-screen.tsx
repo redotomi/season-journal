@@ -36,7 +36,7 @@ export default function FavouriteDriverScreen() {
 					<Heart
 						color={Colors.rose}
 						size={32}
-						strokeWidth={1.5}
+						strokeWidth={1.25}
 					/>
 				</View>
 

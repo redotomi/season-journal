@@ -1,21 +1,10 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useCallback, useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 
-import { JournalColors, JournalFonts } from "@/constants/theme";
+import { Colors } from "@/constants/theme";
 
-interface TabItemConfig {
-	readonly rotation: string;
-	readonly offsetY: number;
-}
-
-const TAB_QUIRKS: readonly TabItemConfig[] = [
-	{ rotation: "-1.5deg", offsetY: -1 },
-	{ rotation: "0.8deg", offsetY: 1 },
-	{ rotation: "-0.5deg", offsetY: -2 },
-] as const;
-
-export default function JournalTabBar({
+export default function GlassyTabBar({
 	state,
 	descriptors,
 	navigation,
@@ -49,18 +38,14 @@ export default function JournalTabBar({
 
 	const tabs = useMemo(
 		() =>
-			routes.map((route, index) => {
+			routes.map((route) => {
 				const { options } = descriptors[route.key];
-				const label = options.title ?? route.name;
-				const isFocused = state.index === index;
-				const quirk = TAB_QUIRKS[index % TAB_QUIRKS.length];
+				const isFocused = state.index === routes.indexOf(route);
 
 				return {
 					key: route.key,
 					routeName: route.name,
-					label,
 					isFocused,
-					quirk,
 					icon: options.tabBarIcon,
 				};
 			}),
@@ -70,13 +55,21 @@ export default function JournalTabBar({
 	return (
 		<View
 			style={{
+				position: "absolute",
+				bottom: 32,
+				left: 40,
+				right: 40,
+				backgroundColor: Colors.dark,
+				borderRadius: 28,
 				flexDirection: "row",
-				backgroundColor: JournalColors.cream,
-				borderTopWidth: 1.5,
-				borderTopColor: JournalColors.line,
-				paddingBottom: 28,
-				paddingTop: 8,
-				borderStyle: "dashed",
+				alignItems: "center",
+				justifyContent: "space-evenly",
+				paddingVertical: 12,
+				shadowColor: "#000",
+				shadowOffset: { width: 0, height: 8 },
+				shadowOpacity: 0.15,
+				shadowRadius: 24,
+				elevation: 12,
 			}}
 		>
 			{tabs.map((tab) => (
@@ -89,53 +82,25 @@ export default function JournalTabBar({
 					}
 					onLongPress={() => handleLongPress(tab.key)}
 					style={{
-						flex: 1,
+						width: 48,
+						height: 48,
+						borderRadius: 24,
 						alignItems: "center",
-						paddingVertical: 6,
-						transform: [
-							{ rotate: tab.quirk.rotation },
-							{ translateY: tab.quirk.offsetY },
-						],
+						justifyContent: "center",
+						backgroundColor: tab.isFocused
+							? Colors.white
+							: "transparent",
 					}}
 				>
 					{tab.icon
 						? tab.icon({
 							focused: tab.isFocused,
 							color: tab.isFocused
-								? JournalColors.sienna
-								: JournalColors.muted,
-							size: 24,
+								? Colors.dark
+								: "rgba(255,255,255,0.5)",
+							size: 22,
 						})
 						: null}
-
-					<Text
-						style={{
-							fontFamily: tab.isFocused
-								? JournalFonts.displayMedium
-								: JournalFonts.displayRegular,
-							fontSize: 13,
-							color: tab.isFocused
-								? JournalColors.sienna
-								: JournalColors.muted,
-							marginTop: 2,
-						}}
-					>
-						{tab.label}
-					</Text>
-
-					{tab.isFocused ? (
-						<View
-							style={{
-								width: 20,
-								height: 2.5,
-								backgroundColor: JournalColors.sienna,
-								borderRadius: 2,
-								marginTop: 3,
-								transform: [{ rotate: "-2deg" }],
-								opacity: 0.7,
-							}}
-						/>
-					) : null}
 				</Pressable>
 			))}
 		</View>

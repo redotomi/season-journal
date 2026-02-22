@@ -4,6 +4,7 @@ import { Pressable, View } from "react-native";
 import { useBingoState } from "@/hooks/use-bingo-state";
 import BingoCell from "./bingo-cell";
 import BingoProgressBar from "./bingo-progress-bar";
+import CanvasEditorModal from "./canvas/canvas-editor-modal";
 
 const COLS = 4;
 
@@ -12,6 +13,7 @@ export default function BingoGrid() {
 		useBingoState();
 
 	const [editingIndex, setEditingIndex] = useState<number | null>(null);
+	const [canvasCellIndex, setCanvasCellIndex] = useState<number | null>(null);
 
 	const handlePress = useCallback(
 		(index: number) => {
@@ -28,13 +30,24 @@ export default function BingoGrid() {
 		setEditingIndex(index);
 	}, []);
 
-	const handleEditPress = useCallback(
-		(index: number) => {
-			editCell(index, `Item ${index + 1}`);
-			setEditingIndex(null);
+	const handleEditPress = useCallback((index: number) => {
+		setEditingIndex(null);
+		setCanvasCellIndex(index);
+	}, []);
+
+	const handleCanvasSave = useCallback(
+		(uri: string) => {
+			if (canvasCellIndex !== null) {
+				editCell(canvasCellIndex, uri);
+			}
+			setCanvasCellIndex(null);
 		},
-		[editCell]
+		[canvasCellIndex, editCell]
 	);
+
+	const handleCanvasCancel = useCallback(() => {
+		setCanvasCellIndex(null);
+	}, []);
 
 	const handleBackdropPress = useCallback(() => {
 		setEditingIndex(null);
@@ -49,35 +62,43 @@ export default function BingoGrid() {
 	}, [cells]);
 
 	return (
-		<Pressable onPress={handleBackdropPress}>
-			<BingoProgressBar checked={checkedCount} total={total} />
+		<>
+			<Pressable onPress={handleBackdropPress}>
+				<BingoProgressBar checked={checkedCount} total={total} />
 
-			<View
-				style={{
-					backgroundColor: "rgba(255,255,255,0.5)",
-					borderRadius: 20,
-					padding: 8,
-				}}
-			>
-				{rows.map((row, rowIdx) => (
-					<View key={rowIdx} className="flex-row">
-						{row.map((cell, colIdx) => {
-							const index = rowIdx * COLS + colIdx;
-							return (
-								<BingoCell
-									key={index}
-									cell={cell}
-									index={index}
-									isEditing={editingIndex === index}
-									onPress={handlePress}
-									onLongPress={handleLongPress}
-									onEditPress={handleEditPress}
-								/>
-							);
-						})}
-					</View>
-				))}
-			</View>
-		</Pressable>
+				<View
+					style={{
+						backgroundColor: "rgba(255,255,255,0.5)",
+						borderRadius: 20,
+						padding: 8,
+					}}
+				>
+					{rows.map((row, rowIdx) => (
+						<View key={rowIdx} className="flex-row">
+							{row.map((cell, colIdx) => {
+								const index = rowIdx * COLS + colIdx;
+								return (
+									<BingoCell
+										key={index}
+										cell={cell}
+										index={index}
+										isEditing={editingIndex === index}
+										onPress={handlePress}
+										onLongPress={handleLongPress}
+										onEditPress={handleEditPress}
+									/>
+								);
+							})}
+						</View>
+					))}
+				</View>
+			</Pressable>
+
+			<CanvasEditorModal
+				visible={canvasCellIndex !== null}
+				onSave={handleCanvasSave}
+				onCancel={handleCanvasCancel}
+			/>
+		</>
 	);
 }

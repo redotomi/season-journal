@@ -2,13 +2,16 @@ import { useCallback, useMemo, useState } from "react";
 
 export type BingoCell = {
 	checked: boolean;
-	text: string;
+	imageUri: string | null;
 };
 
 const GRID_SIZE = 16;
 
 const createInitialCells = (): BingoCell[] =>
-	Array.from({ length: GRID_SIZE }, () => ({ checked: false, text: "" }));
+	Array.from({ length: GRID_SIZE }, () => ({
+		checked: false,
+		imageUri: null,
+	}));
 
 export function useBingoState() {
 	const [cells, setCells] = useState<BingoCell[]>(createInitialCells);
@@ -26,9 +29,11 @@ export function useBingoState() {
 		);
 	}, []);
 
-	const editCell = useCallback((index: number, text: string) => {
+	const editCell = useCallback((index: number, uri: string) => {
 		setCells((prev) =>
-			prev.map((cell, i) => (i === index ? { ...cell, text } : cell))
+			prev.map((cell, i) =>
+				i === index ? { ...cell, imageUri: uri } : cell
+			)
 		);
 	}, []);
 

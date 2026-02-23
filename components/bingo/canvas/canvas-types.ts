@@ -34,6 +34,8 @@ export type CanvasState = {
 	paths: DrawPath[];
 	texts: CanvasText[];
 	images: CanvasImage[];
+	zOrder: string[];
+	selectedStrokeWidth: number;
 };
 
 export const CANVAS_COLORS = [

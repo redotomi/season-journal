@@ -1,7 +1,7 @@
 import { memo, useRef } from "react";
 import { Animated, PanResponder, Text, View } from "react-native";
 
-import { Colors, Fonts } from "@/constants/theme";
+import { Fonts } from "@/constants/theme";
 import type { CanvasText } from "./canvas-types";
 
 type Props = {
@@ -30,6 +30,9 @@ function DraggableText({
 	const baseScale = useRef(item.scale);
 	const isHandRef = useRef(isHandActive);
 	const lastPageY = useRef(0);
+	const isPinching = useRef(false);
+	const initialPinchDist = useRef<number | null>(null);
+
 	const onDragStartRef = useRef(onDragStart);
 	const onDragEndRef = useRef(onDragEnd);
 	const onDragMoveRef = useRef(onDragMove);
@@ -47,54 +50,85 @@ function DraggableText({
 			onMoveShouldSetPanResponder: (_, g) =>
 				isHandRef.current &&
 				(Math.abs(g.dx) > 2 || Math.abs(g.dy) > 2),
-			onPanResponderGrant: () => {
-				basePos.current = {
-					x: (pan.x as unknown as { _value: number })._value,
-					y: (pan.y as unknown as { _value: number })._value,
-				};
+			onPanResponderGrant: (evt) => {
 				onDragStartRef.current();
+
+				const touches = evt.nativeEvent.touches;
+				if (touches.length >= 2) {
+					isPinching.current = true;
+					const dx = touches[0].pageX - touches[1].pageX;
+					const dy = touches[0].pageY - touches[1].pageY;
+					initialPinchDist.current = Math.sqrt(dx * dx + dy * dy);
+					baseScale.current = (scaleAnim as unknown as { _value: number })._value;
+					basePos.current = {
+						x: (pan.x as unknown as { _value: number })._value,
+						y: (pan.y as unknown as { _value: number })._value,
+					};
+				} else {
+					isPinching.current = false;
+					initialPinchDist.current = null;
+					basePos.current = {
+						x: (pan.x as unknown as { _value: number })._value,
+						y: (pan.y as unknown as { _value: number })._value,
+					};
+				}
 			},
 			onPanResponderMove: (evt, gesture) => {
+				const touches = evt.nativeEvent.touches;
+
+				// Handle Pinch (Zoom)
+				if (touches.length >= 2) {
+					const dx = touches[0].pageX - touches[1].pageX;
+					const dy = touches[0].pageY - touches[1].pageY;
+					const dist = Math.sqrt(dx * dx + dy * dy);
+
+					if (!isPinching.current) {
+						// Transitioned from 1 to 2 touches mid-gesture
+						isPinching.current = true;
+						initialPinchDist.current = dist;
+						baseScale.current = (scaleAnim as unknown as { _value: number })._value;
+						basePos.current = {
+							x: (pan.x as unknown as { _value: number })._value - gesture.dx,
+							y: (pan.y as unknown as { _value: number })._value - gesture.dy,
+						};
+					} else if (initialPinchDist.current) {
+						const ratio = dist / initialPinchDist.current;
+						const newScale = Math.max(0.5, Math.min(4, baseScale.current * ratio));
+						scaleAnim.setValue(newScale);
+					}
+				} else if (touches.length === 1) {
+					if (isPinching.current) {
+						// Transitioned from 2 to 1 touch mid-gesture
+						isPinching.current = false;
+						initialPinchDist.current = null;
+						baseScale.current = (scaleAnim as unknown as { _value: number })._value;
+						basePos.current = {
+							x: (pan.x as unknown as { _value: number })._value - gesture.dx,
+							y: (pan.y as unknown as { _value: number })._value - gesture.dy,
+						};
+					}
+				}
+
+				// Handle Pan (Move) - always happens
 				const nx = basePos.current.x + gesture.dx;
 				const ny = basePos.current.y + gesture.dy;
 				pan.setValue({ x: nx, y: ny });
+
 				lastPageY.current = evt.nativeEvent.pageY;
 				onDragMoveRef.current(evt.nativeEvent.pageY);
 			},
 			onPanResponderRelease: (_, gesture) => {
+				isPinching.current = false;
+				initialPinchDist.current = null;
+
 				const nx = basePos.current.x + gesture.dx;
 				const ny = basePos.current.y + gesture.dy;
 				basePos.current = { x: nx, y: ny };
-				onUpdateRef.current(item.id, { x: nx, y: ny });
-				onDragEndRef.current(item.id, "text", lastPageY.current);
-			},
-			onPanResponderTerminationRequest: () => false,
-		})
-	).current;
-
-	const resizePanResponder = useRef(
-		PanResponder.create({
-			onStartShouldSetPanResponder: () => isHandRef.current,
-			onMoveShouldSetPanResponder: () => isHandRef.current,
-			onPanResponderGrant: () => {
-				baseScale.current = (
-					scaleAnim as unknown as { _value: number }
-				)._value;
-			},
-			onPanResponderMove: (_, gesture) => {
-				const delta = gesture.dy * -0.01;
-				const newScale = Math.max(
-					0.5,
-					Math.min(4, baseScale.current + delta)
-				);
-				scaleAnim.setValue(newScale);
-			},
-			onPanResponderRelease: () => {
-				const finalScale = (
-					scaleAnim as unknown as { _value: number }
-				)._value;
+				const finalScale = (scaleAnim as unknown as { _value: number })._value;
 				baseScale.current = finalScale;
-				onUpdateRef.current(item.id, { scale: finalScale });
+
+				onUpdateRef.current(item.id, { x: nx, y: ny, scale: finalScale });
+				onDragEndRef.current(item.id, "text", lastPageY.current);
 			},
 			onPanResponderTerminationRequest: () => false,
 		})
@@ -126,23 +160,6 @@ function DraggableText({
 				>
 					{item.text}
 				</Text>
-
-				{isHandActive ? (
-					<View
-						{...resizePanResponder.panHandlers}
-						style={{
-							position: "absolute",
-							bottom: -6,
-							right: -6,
-							width: 18,
-							height: 18,
-							borderRadius: 9,
-							backgroundColor: Colors.accent,
-							borderWidth: 2,
-							borderColor: Colors.white,
-						}}
-					/>
-				) : null}
 			</View>
 		</Animated.View>
 	);

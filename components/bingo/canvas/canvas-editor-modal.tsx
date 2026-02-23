@@ -10,6 +10,7 @@ import {
 	TextInput,
 	View,
 } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import ViewShot from "react-native-view-shot";
 
 import { Colors, Fonts } from "@/constants/theme";
@@ -114,10 +115,11 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 		onCancel();
 	}, [editor, onCancel]);
 
-	const handleDragStart = useCallback(() => {
+	const handleDragStart = useCallback((id: string) => {
 		setIsDragging(true);
 		setIsOverTrash(false);
-	}, []);
+		editor.bringToFront(id);
+	}, [editor]);
 
 	const handleDragMove = useCallback((pageY: number) => {
 		const { y, height } = trashLayoutRef.current;
@@ -252,35 +254,66 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								borderColor: Colors.border,
 							}}
 						>
-							{/* Image layer */}
-							{editor.images.map((img) => (
-								<DraggableImage
-									key={img.id}
-									item={img}
-									isHandActive={isHandActive}
-									onUpdate={editor.updateImage}
-									onDragStart={handleDragStart}
-									onDragEnd={handleDragEnd}
-									onDragMove={handleDragMove}
-								/>
-							))}
+							{/* Rendering all historical elements in exact z-order */}
+							{editor.zOrder.map((id) => {
+								const pathItem = editor.paths.find((p) => p.id === id);
+								if (pathItem) {
+									return (
+										<View
+											key={id}
+											style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+											pointerEvents="none"
+										>
+											<Svg style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+												<Path
+													d={pathItem.path}
+													stroke={pathItem.color}
+													strokeWidth={pathItem.strokeWidth}
+													fill="none"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												/>
+											</Svg>
+										</View>
+									);
+								}
 
-							{/* Text layer */}
-							{editor.texts.map((t) => (
-								<DraggableText
-									key={t.id}
-									item={t}
-									isHandActive={isHandActive}
-									onUpdate={editor.updateText}
-									onDragStart={handleDragStart}
-									onDragEnd={handleDragEnd}
-									onDragMove={handleDragMove}
-								/>
-							))}
+								const imgItem = editor.images.find((i) => i.id === id);
+								if (imgItem) {
+									return (
+										<DraggableImage
+											key={id}
+											item={imgItem}
+											isHandActive={isHandActive}
+											onUpdate={editor.updateImage}
+											onDragStart={() => handleDragStart(id)}
+											onDragEnd={handleDragEnd}
+											onDragMove={handleDragMove}
+										/>
+									);
+								}
 
-							{/* Drawing layer */}
+								const textItem = editor.texts.find((t) => t.id === id);
+								if (textItem) {
+									return (
+										<DraggableText
+											key={id}
+											item={textItem}
+											isHandActive={isHandActive}
+											onUpdate={editor.updateText}
+											onDragStart={() => handleDragStart(id)}
+											onDragEnd={handleDragEnd}
+											onDragMove={handleDragMove}
+										/>
+									);
+								}
+
+								return null;
+							})}
+
+							{/* Active Drawing layer (top-most for capturing touches, renders only current stroke) */}
 							<DrawingLayer
-								paths={editor.paths}
+								paths={[]}
 								color={editor.selectedColor}
 								isActive={editor.activeTool === "draw"}
 								onPathComplete={editor.addPath}

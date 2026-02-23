@@ -17,6 +17,7 @@ export function useCanvasEditor() {
 	const [paths, setPaths] = useState<DrawPath[]>([]);
 	const [texts, setTexts] = useState<CanvasText[]>([]);
 	const [images, setImages] = useState<CanvasImage[]>([]);
+	const [zOrder, setZOrder] = useState<string[]>([]);
 	const [undoStack, setUndoStack] = useState<CanvasAction[]>([]);
 	const [activeTool, setActiveTool] = useState<ToolMode>("draw");
 	const [selectedColor, setSelectedColor] = useState<string>(
@@ -32,6 +33,7 @@ export function useCanvasEditor() {
 			strokeWidth: 3,
 		};
 		setPaths((prev) => [...prev, newPath]);
+		setZOrder((prev) => [...prev, id]);
 		setUndoStack((prev) => [...prev, { type: "draw", id }]);
 	}, []);
 
@@ -39,6 +41,7 @@ export function useCanvasEditor() {
 		const id = genId();
 		const newText: CanvasText = { id, text, color, x, y, scale: 1 };
 		setTexts((prev) => [...prev, newText]);
+		setZOrder((prev) => [...prev, id]);
 		setUndoStack((prev) => [...prev, { type: "text", id }]);
 	}, []);
 
@@ -46,6 +49,7 @@ export function useCanvasEditor() {
 		const id = genId();
 		const newImage: CanvasImage = { id, uri, x, y, width, height };
 		setImages((prev) => [...prev, newImage]);
+		setZOrder((prev) => [...prev, id]);
 		setUndoStack((prev) => [...prev, { type: "image", id }]);
 	}, []);
 
@@ -67,6 +71,14 @@ export function useCanvasEditor() {
 		[]
 	);
 
+	const bringToFront = useCallback((id: string) => {
+		setZOrder((prev) => {
+			const arr = prev.filter((item) => item !== id);
+			arr.push(id);
+			return arr;
+		});
+	}, []);
+
 	const undo = useCallback(() => {
 		setUndoStack((prev) => {
 			if (prev.length === 0) return prev;
@@ -84,17 +96,20 @@ export function useCanvasEditor() {
 					setImages((i) => i.filter((item) => item.id !== last.id));
 					break;
 			}
+			setZOrder((z) => z.filter((id) => id !== last.id));
 			return newStack;
 		});
 	}, []);
 
 	const removeText = useCallback((id: string) => {
 		setTexts((prev) => prev.filter((t) => t.id !== id));
+		setZOrder((prev) => prev.filter((item) => item !== id));
 		setUndoStack((prev) => prev.filter((a) => a.id !== id));
 	}, []);
 
 	const removeImage = useCallback((id: string) => {
 		setImages((prev) => prev.filter((i) => i.id !== id));
+		setZOrder((prev) => prev.filter((item) => item !== id));
 		setUndoStack((prev) => prev.filter((a) => a.id !== id));
 	}, []);
 
@@ -102,6 +117,7 @@ export function useCanvasEditor() {
 		setPaths([]);
 		setTexts([]);
 		setImages([]);
+		setZOrder([]);
 		setUndoStack([]);
 		setActiveTool("draw");
 		setSelectedColor(CANVAS_COLORS[0]);
@@ -112,16 +128,22 @@ export function useCanvasEditor() {
 			setPaths(state.paths);
 			setTexts(state.texts);
 			setImages(state.images);
-			const actions: CanvasAction[] = [
-				...state.paths.map((p) => ({ type: "draw" as const, id: p.id })),
-				...state.texts.map((t) => ({ type: "text" as const, id: t.id })),
-				...state.images.map((i) => ({ type: "image" as const, id: i.id })),
-			];
+			setZOrder(state.zOrder || []);
+
+			// Rebuild a flat undo stack for simplicity based on zOrder (approximate)
+			// But for true undo, we'd need to store the CanvasAction[] in state too.
+			// Since we only store raw shapes, we map the zOrder to undo stack:
+			const actions: CanvasAction[] = (state.zOrder || []).map((id) => {
+				if (state.paths.some(p => p.id === id)) return { type: "draw", id };
+				if (state.texts.some(t => t.id === id)) return { type: "text", id };
+				return { type: "image", id };
+			});
 			setUndoStack(actions);
 		} else {
 			setPaths([]);
 			setTexts([]);
 			setImages([]);
+			setZOrder([]);
 			setUndoStack([]);
 		}
 		setActiveTool("draw");
@@ -129,13 +151,14 @@ export function useCanvasEditor() {
 	}, []);
 
 	const getState = useCallback((): CanvasState => {
-		return { paths, texts, images };
-	}, [paths, texts, images]);
+		return { paths, texts, images, zOrder };
+	}, [paths, texts, images, zOrder]);
 
 	return {
 		paths,
 		texts,
 		images,
+		zOrder,
 		undoStack,
 		activeTool,
 		selectedColor,
@@ -148,6 +171,7 @@ export function useCanvasEditor() {
 		updateImage,
 		removeText,
 		removeImage,
+		bringToFront,
 		undo,
 		clear,
 		loadState,

@@ -7,18 +7,21 @@ import type { DrawPath } from "./canvas-types";
 type Props = {
 	paths: DrawPath[];
 	color: string;
+	strokeWidth: number;
 	isActive: boolean;
-	onPathComplete: (pathData: string, color: string) => void;
+	onPathComplete: (pathData: string, color: string, strokeWidth: number) => void;
 };
 
-function DrawingLayer({ paths, color, isActive, onPathComplete }: Props) {
+function DrawingLayer({ paths, color, strokeWidth, isActive, onPathComplete }: Props) {
 	const [currentPath, setCurrentPath] = useState<string>("");
 	const pathRef = useRef<string>("");
 	const colorRef = useRef(color);
+	const strokeWidthRef = useRef(strokeWidth);
 	const isActiveRef = useRef(isActive);
 	const onPathCompleteRef = useRef(onPathComplete);
 
 	colorRef.current = color;
+	strokeWidthRef.current = strokeWidth;
 	isActiveRef.current = isActive;
 	onPathCompleteRef.current = onPathComplete;
 
@@ -43,7 +46,8 @@ function DrawingLayer({ paths, color, isActive, onPathComplete }: Props) {
 				if (pathRef.current) {
 					onPathCompleteRef.current(
 						pathRef.current,
-						colorRef.current
+						colorRef.current,
+						strokeWidthRef.current
 					);
 				}
 				pathRef.current = "";
@@ -89,7 +93,7 @@ function DrawingLayer({ paths, color, isActive, onPathComplete }: Props) {
 					<Path
 						d={currentPath}
 						stroke={colorRef.current}
-						strokeWidth={3}
+						strokeWidth={strokeWidthRef.current}
 						fill="none"
 						strokeLinecap="round"
 						strokeLinejoin="round"

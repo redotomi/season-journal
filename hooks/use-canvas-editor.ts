@@ -23,14 +23,15 @@ export function useCanvasEditor() {
 	const [selectedColor, setSelectedColor] = useState<string>(
 		CANVAS_COLORS[0]
 	);
+	const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(3);
 
-	const addPath = useCallback((pathData: string, color: string) => {
+	const addPath = useCallback((pathData: string, color: string, strokeWidth: number) => {
 		const id = genId();
 		const newPath: DrawPath = {
 			id,
 			path: pathData,
 			color,
-			strokeWidth: 3,
+			strokeWidth,
 		};
 		setPaths((prev) => [...prev, newPath]);
 		setZOrder((prev) => [...prev, id]);
@@ -39,7 +40,7 @@ export function useCanvasEditor() {
 
 	const addText = useCallback((text: string, color: string, x: number, y: number) => {
 		const id = genId();
-		const newText: CanvasText = { id, text, color, x, y, scale: 1 };
+		const newText: CanvasText = { id, text, color, x, y, scale: 1.5 };
 		setTexts((prev) => [...prev, newText]);
 		setZOrder((prev) => [...prev, id]);
 		setUndoStack((prev) => [...prev, { type: "text", id }]);
@@ -121,6 +122,7 @@ export function useCanvasEditor() {
 		setUndoStack([]);
 		setActiveTool("draw");
 		setSelectedColor(CANVAS_COLORS[0]);
+		setSelectedStrokeWidth(3);
 	}, []);
 
 	const loadState = useCallback((state: CanvasState | null) => {
@@ -148,11 +150,12 @@ export function useCanvasEditor() {
 		}
 		setActiveTool("draw");
 		setSelectedColor(CANVAS_COLORS[0]);
+		setSelectedStrokeWidth(state?.selectedStrokeWidth ?? 3);
 	}, []);
 
 	const getState = useCallback((): CanvasState => {
-		return { paths, texts, images, zOrder };
-	}, [paths, texts, images, zOrder]);
+		return { paths, texts, images, zOrder, selectedStrokeWidth };
+	}, [paths, texts, images, zOrder, selectedStrokeWidth]);
 
 	return {
 		paths,
@@ -162,8 +165,10 @@ export function useCanvasEditor() {
 		undoStack,
 		activeTool,
 		selectedColor,
+		selectedStrokeWidth,
 		setActiveTool,
 		setSelectedColor,
+		setSelectedStrokeWidth,
 		addPath,
 		addText,
 		addImage,

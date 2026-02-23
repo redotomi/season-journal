@@ -35,6 +35,7 @@ export type CanvasState = {
 	texts: CanvasText[];
 	images: CanvasImage[];
 	zOrder: string[];
+	selectedStrokeWidth: number;
 };
 
 export const CANVAS_COLORS = [

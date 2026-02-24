@@ -1,13 +1,14 @@
-import { Image as ExpoImage, Hand, Palette, Pencil, Type } from "lucide-react-native";
+import { Image as ExpoImage, Hand, Palette, Pencil, Pipette, Type } from "lucide-react-native";
 import { memo, useCallback } from "react";
 import { Pressable, View } from "react-native";
 
 import { Colors } from "@/constants/theme";
-import { CANVAS_COLORS, type ToolMode } from "./canvas-types";
+import { type ToolMode } from "./canvas-types";
 
 type Props = {
 	activeTool: ToolMode;
 	selectedColor: string;
+	recentColors: string[];
 	selectedStrokeWidth: number;
 	onToolChange: (tool: ToolMode) => void;
 	onColorChange: (color: string) => void;
@@ -32,6 +33,7 @@ const STROKE_WIDTHS = [
 function CanvasToolbar({
 	activeTool,
 	selectedColor,
+	recentColors,
 	selectedStrokeWidth,
 	onToolChange,
 	onColorChange,
@@ -50,7 +52,7 @@ function CanvasToolbar({
 		[onToolChange, onImagePick]
 	);
 
-	const showColors = activeTool === "draw" || activeTool === "text";
+	const showColors = activeTool === "draw" || activeTool === "text" || activeTool === "pipette";
 
 	return (
 		<View style={{ paddingVertical: 12, gap: 12 }}>
@@ -59,9 +61,9 @@ function CanvasToolbar({
 					className="flex-row items-center justify-center"
 					style={{ gap: 10 }}
 				>
-					{CANVAS_COLORS.map((color) => (
+					{recentColors.map((color, index) => (
 						<Pressable
-							key={color}
+							key={`${color}-${index}`}
 							onPress={() => onColorChange(color)}
 							style={{
 								width: 32,
@@ -85,7 +87,7 @@ function CanvasToolbar({
 							backgroundColor: Colors.surfaceSolid,
 							borderWidth: 1,
 							borderColor:
-								!CANVAS_COLORS.includes(selectedColor as any)
+								!recentColors.includes(selectedColor)
 									? Colors.accent
 									: Colors.border,
 							alignItems: "center",
@@ -94,10 +96,31 @@ function CanvasToolbar({
 					>
 						<Palette
 							color={
-								!CANVAS_COLORS.includes(selectedColor as any)
+								!recentColors.includes(selectedColor)
 									? Colors.accent
 									: Colors.textSecondary
 							}
+							size={16}
+						/>
+					</Pressable>
+
+					<View style={{ width: 1, height: 24, backgroundColor: Colors.border, marginHorizontal: 4 }} />
+
+					<Pressable
+						onPress={() => onToolChange("pipette")}
+						style={{
+							width: 32,
+							height: 32,
+							borderRadius: 16,
+							backgroundColor: activeTool === "pipette" ? Colors.dark : Colors.surfaceSolid,
+							borderWidth: 1,
+							borderColor: activeTool === "pipette" ? Colors.dark : Colors.border,
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
+						<Pipette
+							color={activeTool === "pipette" ? Colors.white : Colors.textSecondary}
 							size={16}
 						/>
 					</Pressable>

@@ -20,10 +20,21 @@ export function useCanvasEditor() {
 	const [zOrder, setZOrder] = useState<string[]>([]);
 	const [undoStack, setUndoStack] = useState<CanvasAction[]>([]);
 	const [activeTool, setActiveTool] = useState<ToolMode>("draw");
-	const [selectedColor, setSelectedColor] = useState<string>(
+	const [recentColors, setRecentColors] = useState<string[]>([...CANVAS_COLORS]);
+	const [selectedColor, setSelectedColorState] = useState<string>(
 		CANVAS_COLORS[0]
 	);
 	const [selectedStrokeWidth, setSelectedStrokeWidth] = useState<number>(3);
+
+	const setSelectedColor = useCallback((color: string) => {
+		setSelectedColorState(color);
+		setRecentColors((prev) => {
+			if (prev.includes(color)) return prev;
+			const newColors = [color, ...prev];
+			if (newColors.length > 6) newColors.pop();
+			return newColors;
+		});
+	}, []);
 
 	const addPath = useCallback((pathData: string, color: string, strokeWidth: number) => {
 		const id = genId();
@@ -122,8 +133,9 @@ export function useCanvasEditor() {
 		setUndoStack([]);
 		setActiveTool("draw");
 		setSelectedColor(CANVAS_COLORS[0]);
+		setRecentColors([...CANVAS_COLORS]);
 		setSelectedStrokeWidth(3);
-	}, []);
+	}, [setSelectedColor]);
 
 	const loadState = useCallback((state: CanvasState | null) => {
 		if (state) {
@@ -132,9 +144,6 @@ export function useCanvasEditor() {
 			setImages(state.images);
 			setZOrder(state.zOrder || []);
 
-			// Rebuild a flat undo stack for simplicity based on zOrder (approximate)
-			// But for true undo, we'd need to store the CanvasAction[] in state too.
-			// Since we only store raw shapes, we map the zOrder to undo stack:
 			const actions: CanvasAction[] = (state.zOrder || []).map((id) => {
 				if (state.paths.some(p => p.id === id)) return { type: "draw", id };
 				if (state.texts.some(t => t.id === id)) return { type: "text", id };
@@ -149,13 +158,14 @@ export function useCanvasEditor() {
 			setUndoStack([]);
 		}
 		setActiveTool("draw");
-		setSelectedColor(CANVAS_COLORS[0]);
+		setSelectedColorState(state?.selectedColor ?? CANVAS_COLORS[0]);
+		setRecentColors(state?.recentColors ?? [...CANVAS_COLORS]);
 		setSelectedStrokeWidth(state?.selectedStrokeWidth ?? 3);
 	}, []);
 
 	const getState = useCallback((): CanvasState => {
-		return { paths, texts, images, zOrder, selectedStrokeWidth };
-	}, [paths, texts, images, zOrder, selectedStrokeWidth]);
+		return { paths, texts, images, zOrder, selectedColor, selectedStrokeWidth, recentColors };
+	}, [paths, texts, images, zOrder, selectedColor, selectedStrokeWidth, recentColors]);
 
 	return {
 		paths,
@@ -165,6 +175,7 @@ export function useCanvasEditor() {
 		undoStack,
 		activeTool,
 		selectedColor,
+		recentColors,
 		selectedStrokeWidth,
 		setActiveTool,
 		setSelectedColor,

@@ -9,3 +9,4 @@ You are an expert React Native, Expo, and TypeScript developer. Your mission is 
 3. Navigation: Implement Expo Router (file-based routing) for all screen management.
 4. Performance: Optimize for mobile by prioritizing 'useCallback' and 'useMemo' to minimize re-renders. Strictly avoid heavy web-specific libraries that degrade mobile performance.
 5. Package Management: Always provide and use commands via 'pnpm'.
+6. Do NOT write comments.

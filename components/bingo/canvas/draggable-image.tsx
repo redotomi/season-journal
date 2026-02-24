@@ -81,14 +81,12 @@ function DraggableImage({
 			onPanResponderMove: (evt, gesture) => {
 				const touches = evt.nativeEvent.touches;
 
-				// Handle Pinch (Zoom)
 				if (touches.length >= 2) {
 					const dx = touches[0].pageX - touches[1].pageX;
 					const dy = touches[0].pageY - touches[1].pageY;
 					const dist = Math.sqrt(dx * dx + dy * dy);
 
 					if (!isPinching.current) {
-						// Transitioned from 1 to 2 touches mid-gesture
 						isPinching.current = true;
 						initialPinchDist.current = dist;
 						baseSize.current = {
@@ -108,7 +106,6 @@ function DraggableImage({
 					}
 				} else if (touches.length === 1) {
 					if (isPinching.current) {
-						// Transitioned from 2 to 1 touch mid-gesture
 						isPinching.current = false;
 						initialPinchDist.current = null;
 						baseSize.current = {
@@ -122,7 +119,6 @@ function DraggableImage({
 					}
 				}
 
-				// Handle Pan (Move) - always happens
 				const nx = basePos.current.x + gesture.dx;
 				const ny = basePos.current.y + gesture.dy;
 				pan.setValue({ x: nx, y: ny });

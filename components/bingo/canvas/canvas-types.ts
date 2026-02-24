@@ -28,14 +28,16 @@ export type CanvasAction = {
 	id: string;
 };
 
-export type ToolMode = "draw" | "text" | "image" | "hand" | null;
+export type ToolMode = "draw" | "text" | "image" | "hand" | "pipette" | null;
 
 export type CanvasState = {
 	paths: DrawPath[];
 	texts: CanvasText[];
 	images: CanvasImage[];
 	zOrder: string[];
+	selectedColor: string;
 	selectedStrokeWidth: number;
+	recentColors: string[];
 };
 
 export const CANVAS_COLORS = [

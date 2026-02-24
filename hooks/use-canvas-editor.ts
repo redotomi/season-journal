@@ -144,9 +144,6 @@ export function useCanvasEditor() {
 			setImages(state.images);
 			setZOrder(state.zOrder || []);
 
-			// Rebuild a flat undo stack for simplicity based on zOrder (approximate)
-			// But for true undo, we'd need to store the CanvasAction[] in state too.
-			// Since we only store raw shapes, we map the zOrder to undo stack:
 			const actions: CanvasAction[] = (state.zOrder || []).map((id) => {
 				if (state.paths.some(p => p.id === id)) return { type: "draw", id };
 				if (state.texts.some(t => t.id === id)) return { type: "text", id };

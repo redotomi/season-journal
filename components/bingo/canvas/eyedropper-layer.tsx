@@ -105,7 +105,6 @@ export default function EyedropperLayer({
                     loupe.style.backgroundColor = hex;
                 }
             } catch (e) {
-                // Ignore security DOMExceptions or out-of-bounds
             }
 		}
 
@@ -148,7 +147,6 @@ export default function EyedropperLayer({
 				onColorPicked(data.hex);
 			}
 		} catch (e) {
-			console.log(e);
 		}
 	};
 

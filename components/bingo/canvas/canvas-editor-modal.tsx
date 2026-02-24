@@ -64,9 +64,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 							result: "base64",
 						});
 						setEyedropperUri(uri);
-					} catch (e) {
-						console.log("Eyedropper capture failed", e);
-					}
+					} catch (e) { }
 				}
 			} else {
 				setEyedropperUri(null);
@@ -187,7 +185,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 					className="flex-1"
 					style={{ backgroundColor: Colors.background }}
 				>
-					{/* Header */}
 					<View
 						className="flex-row items-center justify-between px-5"
 						style={{ paddingTop: 60, paddingBottom: 12 }}
@@ -248,7 +245,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 						</View>
 					</View>
 
-					{/* Canvas */}
 					<View
 						className="items-center justify-center flex-1"
 						style={{ paddingHorizontal: 24 }}
@@ -277,7 +273,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									borderColor: Colors.border,
 								}}
 							>
-								{/* Rendering all historical elements in exact z-order */}
 								{editor.zOrder.map((id) => {
 									const pathItem = editor.paths.find((p) => p.id === id);
 									if (pathItem) {
@@ -334,7 +329,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									return null;
 								})}
 
-								{/* Active Drawing layer (top-most for capturing touches, renders only current stroke) */}
 								<DrawingLayer
 									paths={[]}
 									color={editor.selectedColor}
@@ -363,7 +357,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 						</ViewShot>
 					</View>
 
-					{/* Trash zone — absolutely positioned, no layout shift */}
 					{isDragging ? (
 						<View
 							ref={trashRef}
@@ -412,7 +405,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 						</View>
 					) : null}
 
-					{/* Text input overlay */}
 					{showTextInput ? (
 						<View
 							style={{
@@ -508,7 +500,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 						</View>
 					) : null}
 
-					{/* Toolbar */}
 					<CanvasToolbar
 						activeTool={editor.activeTool}
 						selectedColor={editor.selectedColor}
@@ -522,7 +513,6 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 					/>
 				</View>
 
-				{/* Custom Color Picker Overlay (Replaces Modal to prevent iOS hierarchy crashes) */}
 				{showColorPicker ? (
 					<View
 						style={{

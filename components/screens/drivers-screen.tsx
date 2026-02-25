@@ -1,68 +1,101 @@
-import { TrendingUp } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { useCallback } from "react";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { Colors, Fonts } from "@/constants/theme";
+import { useDriverStandings } from "@/hooks/queries/useStandings";
+import { DriverStanding } from "@/services/jolpica/api";
 
 export default function DriversScreen() {
-	return (
-		<View
-			className="flex-1 px-5 pt-8"
-			style={{ backgroundColor: Colors.background }}
-		>
-			<View
-				style={{
-					backgroundColor: Colors.surfaceSolid,
-					borderRadius: 24,
-					padding: 32,
-					alignItems: "center",
-					shadowColor: "#000",
-					shadowOffset: { width: 0, height: 4 },
-					shadowOpacity: 0.06,
-					shadowRadius: 16,
-					elevation: 4,
-				}}
-			>
-				<View
-					style={{
-						width: 72,
-						height: 72,
-						borderRadius: 18,
-						backgroundColor: "#EDF5E8",
-						alignItems: "center",
-						justifyContent: "center",
-						marginBottom: 20,
-					}}
-				>
-					<TrendingUp
-						color={Colors.sage}
-						size={32}
-						strokeWidth={1.25}
-					/>
+	const { data: standings, isLoading, isError } = useDriverStandings("2025");
+
+	const renderItem = useCallback(({ item }: { item: DriverStanding }) => {
+		return (
+			<View className="flex-row items-center justify-between bg-surfaceSolid p-4 mb-3 rounded-2xl shadow-sm">
+				<View className="flex-row items-center flex-1">
+					<Text
+						style={{
+							fontFamily: Fonts.displayMedium,
+							fontSize: 18,
+							color: Colors.textPrimary,
+							width: 32,
+						}}
+					>
+						{item.position}
+					</Text>
+					<View className="ml-3 flex-1">
+						<Text
+							style={{
+								fontFamily: Fonts.bodyBold,
+								fontSize: 16,
+								color: Colors.textPrimary,
+							}}
+							numberOfLines={1}
+						>
+							{item.Driver.givenName} {item.Driver.familyName}
+						</Text>
+						<Text
+							style={{
+								fontFamily: Fonts.body,
+								fontSize: 12,
+								color: Colors.textSecondary,
+							}}
+							numberOfLines={1}
+						>
+							{item.Constructors[0]?.name}
+						</Text>
+					</View>
 				</View>
+				<View className="items-end pl-2">
+					<Text
+						style={{
+							fontFamily: Fonts.bodyBold,
+							fontSize: 16,
+							color: Colors.textPrimary,
+						}}
+					>
+						{item.points} PTS
+					</Text>
+				</View>
+			</View>
+		);
+	}, []);
 
-				<Text
-					style={{
-						fontFamily: Fonts.displayMedium,
-						fontSize: 20,
-						color: Colors.textPrimary,
-						marginBottom: 8,
-					}}
-				>
-					Drivers Championship
-				</Text>
+	if (isLoading) {
+		return (
+			<View
+				className="flex-1 justify-center items-center"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<ActivityIndicator size="large" color={Colors.accent} />
+			</View>
+		);
+	}
 
-				<Text
-					style={{
-						fontFamily: Fonts.body,
-						fontSize: 14,
-						color: Colors.textSecondary,
-						textAlign: "center",
-						lineHeight: 20,
-					}}
-				>
-					Track every driver{"'"}s journey through the season
+	if (isError) {
+		return (
+			<View
+				className="flex-1 justify-center items-center px-5"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<Text style={{ fontFamily: Fonts.body, color: Colors.rose }}>
+					Error loading driver standings.
 				</Text>
 			</View>
+		);
+	}
+
+	return (
+		<View
+			className="flex-1 px-5 pt-4"
+			style={{ backgroundColor: Colors.background }}
+		>
+			<FlatList
+				data={standings}
+				keyExtractor={(item) => item.Driver.driverId}
+				renderItem={renderItem}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 24 }}
+			/>
 		</View>
 	);
 }

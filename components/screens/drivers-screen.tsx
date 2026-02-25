@@ -2,11 +2,12 @@ import { useCallback } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { Colors, Fonts } from "@/constants/theme";
+import { DEFAULT_YEAR } from "@/constants/vaules";
 import { useDriverStandings } from "@/hooks/queries/useStandings";
 import { DriverStanding } from "@/services/jolpica/api";
 
 export default function DriversScreen() {
-	const { data: standings, isLoading, isError } = useDriverStandings("2025");
+	const { data: standings, isLoading, isError } = useDriverStandings(DEFAULT_YEAR);
 
 	const renderItem = useCallback(({ item }: { item: DriverStanding }) => {
 		return (

@@ -1,9 +1,38 @@
 import { Heart } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 import { Colors, Fonts } from "@/constants/theme";
+import { useFavoriteTeam } from "@/hooks/queries/useFavorites";
 
 export default function FavouriteTeamScreen() {
+	// Mocking a favorite team ID - later fetch from Supabase
+	const mockFavoriteId = "red_bull";
+	const { data: team, isLoading, isError } = useFavoriteTeam(mockFavoriteId);
+
+	if (isLoading) {
+		return (
+			<View
+				className="flex-1 justify-center items-center"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<ActivityIndicator size="large" color={Colors.accent} />
+			</View>
+		);
+	}
+
+	if (isError || !team) {
+		return (
+			<View
+				className="flex-1 justify-center items-center px-5"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<Text style={{ fontFamily: Fonts.body, color: Colors.textSecondary }}>
+					Could not load favorite team details.
+				</Text>
+			</View>
+		);
+	}
+
 	return (
 		<View
 			className="flex-1 px-5 pt-8"
@@ -44,12 +73,12 @@ export default function FavouriteTeamScreen() {
 				<Text
 					style={{
 						fontFamily: Fonts.displayMedium,
-						fontSize: 20,
+						fontSize: 24,
 						color: Colors.textPrimary,
 						marginBottom: 8,
 					}}
 				>
-					Favourite Team
+					{team.name}
 				</Text>
 
 				<Text
@@ -61,7 +90,7 @@ export default function FavouriteTeamScreen() {
 						lineHeight: 20,
 					}}
 				>
-					Pick your favorite constructor and track their progress
+					Nationality: {team.nationality}
 				</Text>
 			</View>
 		</View>

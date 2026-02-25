@@ -1,9 +1,38 @@
 import { Heart } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 import { Colors, Fonts } from "@/constants/theme";
+import { useFavoriteDriver } from "@/hooks/queries/useFavorites";
 
 export default function FavouriteDriverScreen() {
+	// Mocking a favorite driver ID - later fetch from Supabase
+	const mockFavoriteId = "max_verstappen";
+	const { data: driver, isLoading, isError } = useFavoriteDriver(mockFavoriteId);
+
+	if (isLoading) {
+		return (
+			<View
+				className="flex-1 justify-center items-center"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<ActivityIndicator size="large" color={Colors.accent} />
+			</View>
+		);
+	}
+
+	if (isError || !driver) {
+		return (
+			<View
+				className="flex-1 justify-center items-center px-5"
+				style={{ backgroundColor: Colors.background }}
+			>
+				<Text style={{ fontFamily: Fonts.body, color: Colors.textSecondary }}>
+					Could not load favorite driver details.
+				</Text>
+			</View>
+		);
+	}
+
 	return (
 		<View
 			className="flex-1 px-5 pt-8"
@@ -33,22 +62,29 @@ export default function FavouriteDriverScreen() {
 						marginBottom: 20,
 					}}
 				>
-					<Heart
-						color={Colors.rose}
-						size={32}
-						strokeWidth={1.25}
-					/>
+					<Heart color={Colors.rose} size={32} strokeWidth={1.25} />
 				</View>
 
 				<Text
 					style={{
 						fontFamily: Fonts.displayMedium,
-						fontSize: 20,
+						fontSize: 24,
 						color: Colors.textPrimary,
-						marginBottom: 8,
+						marginBottom: 4,
 					}}
 				>
-					Favourite Driver
+					{driver.givenName} {driver.familyName}
+				</Text>
+
+				<Text
+					style={{
+						fontFamily: Fonts.bodyBold,
+						fontSize: 16,
+						color: Colors.accent,
+						marginBottom: 16,
+					}}
+				>
+					{driver.permanentNumber}
 				</Text>
 
 				<Text
@@ -60,7 +96,19 @@ export default function FavouriteDriverScreen() {
 						lineHeight: 20,
 					}}
 				>
-					Choose your champion and follow their season
+					Nationality: {driver.nationality}
+				</Text>
+				<Text
+					style={{
+						fontFamily: Fonts.body,
+						fontSize: 14,
+						color: Colors.textSecondary,
+						textAlign: "center",
+						lineHeight: 20,
+						marginTop: 4,
+					}}
+				>
+					DOB: {driver.dateOfBirth}
 				</Text>
 			</View>
 		</View>

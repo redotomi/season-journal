@@ -1,115 +1,71 @@
-import { Heart } from "lucide-react-native";
+import { Calendar, Flag, Heart } from "lucide-react-native";
 import { ActivityIndicator, Text, View } from "react-native";
 
-import { Colors, Fonts } from "@/constants/theme";
 import { useFavoriteDriver } from "@/hooks/queries/useFavorites";
 
+const MOCK_FAVORITE_ID = "max_verstappen";
+
+const LoadingState = (
+	<View className="flex-1 justify-center items-center bg-glass-bg">
+		<ActivityIndicator size="large" color="#FABC05" />
+	</View>
+);
+
+const ErrorState = (
+	<View className="flex-1 justify-center items-center px-5 bg-glass-bg">
+		<Text className="font-nunito text-[#8E8E93]">
+			Could not load favorite driver details.
+		</Text>
+	</View>
+);
+
 export default function FavouriteDriverScreen() {
-	// Mocking a favorite driver ID - later fetch from Supabase
-	const mockFavoriteId = "max_verstappen";
-	const { data: driver, isLoading, isError } = useFavoriteDriver(mockFavoriteId);
+	const { data: driver, isLoading, isError } = useFavoriteDriver(MOCK_FAVORITE_ID);
 
 	if (isLoading) {
-		return (
-			<View
-				className="flex-1 justify-center items-center"
-				style={{ backgroundColor: Colors.background }}
-			>
-				<ActivityIndicator size="large" color={Colors.accent} />
-			</View>
-		);
+		return LoadingState;
 	}
 
 	if (isError || !driver) {
-		return (
-			<View
-				className="flex-1 justify-center items-center px-5"
-				style={{ backgroundColor: Colors.background }}
-			>
-				<Text style={{ fontFamily: Fonts.body, color: Colors.textSecondary }}>
-					Could not load favorite driver details.
-				</Text>
-			</View>
-		);
+		return ErrorState;
 	}
 
 	return (
-		<View
-			className="flex-1 px-5 pt-8"
-			style={{ backgroundColor: Colors.background }}
-		>
-			<View
-				style={{
-					backgroundColor: Colors.surfaceSolid,
-					borderRadius: 24,
-					padding: 32,
-					alignItems: "center",
-					shadowColor: "#000",
-					shadowOffset: { width: 0, height: 4 },
-					shadowOpacity: 0.06,
-					shadowRadius: 16,
-					elevation: 4,
-				}}
-			>
-				<View
-					style={{
-						width: 72,
-						height: 72,
-						borderRadius: 18,
-						backgroundColor: "#F5ECEC",
-						alignItems: "center",
-						justifyContent: "center",
-						marginBottom: 20,
-					}}
-				>
-					<Heart color={Colors.rose} size={32} strokeWidth={1.25} />
+		<View className="flex-1 px-5 pt-8 bg-glass-bg">
+			<View className="bg-glass-solid rounded-3xl p-8 items-center shadow-lg shadow-black/5">
+				<View className="w-20 h-20 rounded-[24px] bg-[#F5ECEC] items-center justify-center mb-6">
+					<Heart color="#D4A0A0" size={36} strokeWidth={1.5} />
 				</View>
 
-				<Text
-					style={{
-						fontFamily: Fonts.displayMedium,
-						fontSize: 24,
-						color: Colors.textPrimary,
-						marginBottom: 4,
-					}}
-				>
+				<Text className="font-inter-bold text-3xl text-glass-dark mb-1 text-center">
 					{driver.givenName} {driver.familyName}
 				</Text>
 
-				<Text
-					style={{
-						fontFamily: Fonts.bodyBold,
-						fontSize: 16,
-						color: Colors.accent,
-						marginBottom: 16,
-					}}
-				>
-					{driver.permanentNumber}
-				</Text>
+				<View className="bg-[#FFF3DC] px-4 py-1.5 rounded-full mb-8">
+					<Text className="font-nunito-bold text-lg text-[#FABC05]">
+						{driver.permanentNumber}
+					</Text>
+				</View>
 
-				<Text
-					style={{
-						fontFamily: Fonts.body,
-						fontSize: 14,
-						color: Colors.textSecondary,
-						textAlign: "center",
-						lineHeight: 20,
-					}}
-				>
-					Nationality: {driver.nationality}
-				</Text>
-				<Text
-					style={{
-						fontFamily: Fonts.body,
-						fontSize: 14,
-						color: Colors.textSecondary,
-						textAlign: "center",
-						lineHeight: 20,
-						marginTop: 4,
-					}}
-				>
-					DOB: {driver.dateOfBirth}
-				</Text>
+				<View className="w-full bg-[#F8F8FC] rounded-2xl p-4 mb-3 flex-row items-center justify-between">
+					<View className="flex-row items-center">
+						<Flag color="#8E8E93" size={20} strokeWidth={2} />
+						<Text className="font-nunito text-[#8E8E93] ml-3 text-base">Nationality</Text>
+					</View>
+					<Text className="font-nunito-bold text-glass-dark text-base">
+						{driver.nationality}
+					</Text>
+				</View>
+
+				<View className="w-full bg-[#F8F8FC] rounded-2xl p-4 flex-row items-center justify-between">
+					<View className="flex-row items-center">
+						<Calendar color="#8E8E93" size={20} strokeWidth={2} />
+						<Text className="font-nunito text-[#8E8E93] ml-3 text-base">Date of Birth</Text>
+					</View>
+					<Text className="font-nunito-bold text-glass-dark text-base">
+						{driver.dateOfBirth}
+					</Text>
+				</View>
 			</View>
 		</View>
 	);

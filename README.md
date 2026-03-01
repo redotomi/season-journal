@@ -27,7 +27,6 @@ Season Journal brings the thrill of the grid to your fingertips with a suite of 
 1. **🎯 Race Predictions Bingo:** An interactive bingo board for making and tracking your race weekend predictions. Includes a rich canvas editor to customize your bingo cards with text and images!
 2. **🏆 Championship Tracking:** Keep a close eye on the pulse of the season. Track the standings for both the World Drivers' Championship and the Constructors' Championship.
 3. **⭐ Favourites:** Curate your personal F1 experience. Save your favourite drivers and teams to access their stats and information quickly.
-4. **✨ Glassy UI Aesthetics:** A premium, modern, and aesthetically pleasing interface matching the high-speed, high-tech nature of the sport, completely styled with NativeWind.
 
 ## 🛠️ Tech Stack
 

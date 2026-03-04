@@ -1,6 +1,11 @@
 import { Check, Pencil } from "lucide-react-native";
 import { memo, useCallback } from "react";
 import { Image, Pressable, View } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from "react-native-reanimated";
 
 import { Colors } from "@/constants/theme";
 import type { BingoCell as BingoCellType } from "@/hooks/use-bingo-state";
@@ -14,6 +19,14 @@ type Props = {
 	onEditPress: (index: number) => void;
 };
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const SPRING_CONFIG = {
+	damping: 14,
+	stiffness: 180,
+	mass: 0.5,
+};
+
 function BingoCellComponent({
 	cell,
 	index,
@@ -22,6 +35,8 @@ function BingoCellComponent({
 	onLongPress,
 	onEditPress,
 }: Props) {
+	const scale = useSharedValue(1);
+
 	const handlePress = useCallback(() => {
 		onPress(index);
 	}, [onPress, index]);
@@ -34,30 +49,49 @@ function BingoCellComponent({
 		onEditPress(index);
 	}, [onEditPress, index]);
 
-	const backgroundColor = cell.checked ? Colors.accent : Colors.surfaceSolid;
+	const handlePressIn = useCallback(() => {
+		scale.value = withSpring(0.92, SPRING_CONFIG);
+	}, [scale]);
+
+	const handlePressOut = useCallback(() => {
+		scale.value = withSpring(1, SPRING_CONFIG);
+	}, [scale]);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
+	const backgroundColor = cell.checked ? Colors.sienna : Colors.creamDark;
 
 	return (
-		<Pressable
+		<AnimatedPressable
 			onPress={handlePress}
 			onLongPress={handleLongPress}
+			onPressIn={handlePressIn}
+			onPressOut={handlePressOut}
 			delayLongPress={400}
-			style={{
-				flex: 1,
-				aspectRatio: 1,
-				margin: 4,
-				borderRadius: 16,
-				backgroundColor,
-				borderWidth: 1,
-				borderColor: cell.checked ? Colors.accent : Colors.border,
-				alignItems: "center",
-				justifyContent: "center",
-				overflow: "hidden",
-				shadowColor: "#000",
-				shadowOffset: { width: 0, height: 2 },
-				shadowOpacity: cell.checked ? 0.12 : 0.04,
-				shadowRadius: 8,
-				elevation: cell.checked ? 4 : 1,
-			}}
+			style={[
+				{
+					flex: 1,
+					aspectRatio: 1,
+					margin: 4,
+					borderRadius: 16,
+					backgroundColor,
+					borderWidth: 1,
+					borderColor: cell.checked
+						? Colors.sienna
+						: Colors.border,
+					alignItems: "center",
+					justifyContent: "center",
+					overflow: "hidden",
+					shadowColor: Colors.forest,
+					shadowOffset: { width: 0, height: 3 },
+					shadowOpacity: cell.checked ? 0.18 : 0.06,
+					shadowRadius: 10,
+					elevation: cell.checked ? 4 : 1,
+				},
+				animatedStyle,
+			]}
 		>
 			{cell.imageUri ? (
 				<Image
@@ -82,7 +116,7 @@ function BingoCellComponent({
 						left: 0,
 						right: 0,
 						bottom: 0,
-						backgroundColor: "rgba(250,188,5,0.45)",
+						backgroundColor: "rgba(163,50,11,0.35)",
 						borderRadius: 15,
 					}}
 				/>
@@ -94,15 +128,19 @@ function BingoCellComponent({
 						position: "absolute",
 						top: 6,
 						right: 6,
-						width: 20,
-						height: 20,
-						borderRadius: 10,
-						backgroundColor: "rgba(255,255,255,0.5)",
+						width: 22,
+						height: 22,
+						borderRadius: 11,
+						backgroundColor: Colors.wheat,
 						alignItems: "center",
 						justifyContent: "center",
+						shadowColor: Colors.forest,
+						shadowOffset: { width: 0, height: 1 },
+						shadowOpacity: 0.15,
+						shadowRadius: 3,
 					}}
 				>
-					<Check color={Colors.white} size={13} strokeWidth={2.5} />
+					<Check color={Colors.forest} size={13} strokeWidth={2.5} />
 				</View>
 			) : null}
 
@@ -122,13 +160,13 @@ function BingoCellComponent({
 					}}
 				>
 					<Pencil
-						color={Colors.accent}
+						color={Colors.olive}
 						size={28}
 						strokeWidth={1.75}
 					/>
 				</Pressable>
 			) : null}
-		</Pressable>
+		</AnimatedPressable>
 	);
 }
 

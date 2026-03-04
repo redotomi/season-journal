@@ -11,24 +11,51 @@ export default function DriversScreen() {
 
 	const renderItem = useCallback(({ item }: { item: DriverStanding }) => {
 		return (
-			<View className="flex-row items-center justify-between bg-surfaceSolid p-4 mb-3 rounded-2xl shadow-sm">
+			<View
+				style={{
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					backgroundColor: Colors.creamDark,
+					padding: 16,
+					marginBottom: 10,
+					borderRadius: 18,
+					borderWidth: 1,
+					borderColor: Colors.border,
+					shadowColor: Colors.forest,
+					shadowOffset: { width: 0, height: 2 },
+					shadowOpacity: 0.05,
+					shadowRadius: 8,
+					elevation: 2,
+				}}
+			>
 				<View className="flex-row items-center flex-1">
-					<Text
+					<View
 						style={{
-							fontFamily: Fonts.displayMedium,
-							fontSize: 18,
-							color: Colors.textPrimary,
-							width: 32,
+							width: 36,
+							height: 36,
+							borderRadius: 10,
+							backgroundColor: Colors.accentSoft,
+							alignItems: "center",
+							justifyContent: "center",
 						}}
 					>
-						{item.position}
-					</Text>
+						<Text
+							style={{
+								fontFamily: Fonts.display,
+								fontSize: 15,
+								color: Colors.olive,
+							}}
+						>
+							{item.position}
+						</Text>
+					</View>
 					<View className="ml-3 flex-1">
 						<Text
 							style={{
-								fontFamily: Fonts.bodyBold,
+								fontFamily: Fonts.bodySemiBold,
 								fontSize: 16,
-								color: Colors.textPrimary,
+								color: Colors.forest,
 							}}
 							numberOfLines={1}
 						>
@@ -38,7 +65,7 @@ export default function DriversScreen() {
 							style={{
 								fontFamily: Fonts.body,
 								fontSize: 12,
-								color: Colors.textSecondary,
+								color: Colors.textMuted,
 							}}
 							numberOfLines={1}
 						>
@@ -49,12 +76,22 @@ export default function DriversScreen() {
 				<View className="items-end pl-2">
 					<Text
 						style={{
-							fontFamily: Fonts.bodyBold,
+							fontFamily: Fonts.display,
 							fontSize: 16,
-							color: Colors.textPrimary,
+							color: Colors.sienna,
 						}}
 					>
-						{item.points} PTS
+						{item.points}
+					</Text>
+					<Text
+						style={{
+							fontFamily: Fonts.displayLight,
+							fontSize: 10,
+							color: Colors.textMuted,
+							letterSpacing: 1,
+						}}
+					>
+						PTS
 					</Text>
 				</View>
 			</View>
@@ -67,7 +104,7 @@ export default function DriversScreen() {
 				className="flex-1 justify-center items-center"
 				style={{ backgroundColor: Colors.background }}
 			>
-				<ActivityIndicator size="large" color={Colors.accent} />
+				<ActivityIndicator size="large" color={Colors.wheat} />
 			</View>
 		);
 	}
@@ -78,7 +115,7 @@ export default function DriversScreen() {
 				className="flex-1 justify-center items-center px-5"
 				style={{ backgroundColor: Colors.background }}
 			>
-				<Text style={{ fontFamily: Fonts.body, color: Colors.rose }}>
+				<Text style={{ fontFamily: Fonts.body, color: Colors.error }}>
 					Error loading driver standings.
 				</Text>
 			</View>
@@ -95,7 +132,7 @@ export default function DriversScreen() {
 				keyExtractor={(item) => item.Driver.driverId}
 				renderItem={renderItem}
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={{ paddingBottom: 24 }}
+				contentContainerStyle={{ paddingBottom: 100 }}
 			/>
 		</View>
 	);

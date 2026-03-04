@@ -16,6 +16,7 @@ import Svg, { Path } from "react-native-svg";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import ColorPicker, { HueSlider, Panel1, Preview, Swatches } from "reanimated-color-picker";
 
+import GrainOverlay from "@/components/ui/grain-overlay";
 import { Colors, Fonts } from "@/constants/theme";
 import { useCanvasEditor } from "@/hooks/use-canvas-editor";
 import CanvasToolbar from "./canvas-toolbar";
@@ -185,13 +186,14 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 					className="flex-1"
 					style={{ backgroundColor: Colors.background }}
 				>
+					<GrainOverlay opacity={0.03} />
 					<View
 						className="flex-row items-center justify-between px-5"
 						style={{ paddingTop: 60, paddingBottom: 12 }}
 					>
 						<Pressable onPress={handleCancel} hitSlop={12}>
 							<X
-								color={Colors.textPrimary}
+								color={Colors.forest}
 								size={24}
 								strokeWidth={1.5}
 							/>
@@ -201,7 +203,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 							style={{
 								fontFamily: Fonts.displayMedium,
 								fontSize: 17,
-								color: Colors.textPrimary,
+								color: Colors.forest,
 							}}
 						>
 							Edit Cell
@@ -217,7 +219,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								}}
 							>
 								<Undo2
-									color={Colors.textPrimary}
+									color={Colors.forest}
 									size={22}
 									strokeWidth={1.5}
 								/>
@@ -226,7 +228,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 							<Pressable
 								onPress={handleSave}
 								style={{
-									backgroundColor: Colors.accent,
+									backgroundColor: Colors.sienna,
 									paddingHorizontal: 18,
 									paddingVertical: 8,
 									borderRadius: 12,
@@ -236,7 +238,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									style={{
 										fontFamily: Fonts.displayMedium,
 										fontSize: 15,
-										color: Colors.white,
+										color: Colors.cream,
 									}}
 								>
 									Save
@@ -266,11 +268,11 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								style={{
 									width: CANVAS_SIZE,
 									height: CANVAS_SIZE,
-									backgroundColor: Colors.white,
+									backgroundColor: Colors.creamDark,
 									borderRadius: 16,
 									overflow: "hidden",
 									borderWidth: 1,
-									borderColor: Colors.border,
+									borderColor: Colors.borderStrong,
 								}}
 							>
 								{editor.zOrder.map((id) => {
@@ -375,8 +377,8 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								className="flex-row items-center justify-center"
 								style={{
 									backgroundColor: isOverTrash
-										? "#E53935"
-										: "#FDEAEA",
+										? Colors.error
+										: Colors.errorSoft,
 									borderRadius: 14,
 									paddingVertical: 10,
 									paddingHorizontal: 20,
@@ -388,7 +390,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								}}
 							>
 								<Trash2
-									color={isOverTrash ? "#FFFFFF" : "#E53935"}
+									color={isOverTrash ? Colors.cream : Colors.error}
 									size={20}
 									strokeWidth={1.5}
 								/>
@@ -396,7 +398,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									style={{
 										fontFamily: Fonts.bodySemiBold,
 										fontSize: 14,
-										color: isOverTrash ? "#FFFFFF" : "#E53935",
+										color: isOverTrash ? Colors.cream : Colors.error,
 									}}
 								>
 									Drop here to delete
@@ -413,7 +415,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 								left: 0,
 								right: 0,
 								bottom: 0,
-								backgroundColor: "rgba(0,0,0,0.4)",
+								backgroundColor: "rgba(0,21,20,0.4)",
 								alignItems: "center",
 								justifyContent: "center",
 								paddingHorizontal: 48,
@@ -421,18 +423,24 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 						>
 							<View
 								style={{
-									backgroundColor: Colors.white,
-									borderRadius: 16,
-									padding: 20,
+									backgroundColor: Colors.cream,
+									borderRadius: 20,
+									padding: 24,
 									width: "100%",
-									gap: 12,
+									gap: 14,
+									borderWidth: 1,
+									borderColor: Colors.border,
+									shadowColor: Colors.forest,
+									shadowOffset: { width: 0, height: 8 },
+									shadowOpacity: 0.12,
+									shadowRadius: 24,
 								}}
 							>
 								<Text
 									style={{
 										fontFamily: Fonts.displayMedium,
 										fontSize: 16,
-										color: Colors.textPrimary,
+										color: Colors.forest,
 									}}
 								>
 									Add Text
@@ -442,15 +450,16 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									value={textInput}
 									onChangeText={setTextInput}
 									placeholder="Type here..."
-									placeholderTextColor={Colors.textSecondary}
+									placeholderTextColor={Colors.textMuted}
 									style={{
 										fontFamily: Fonts.body,
 										fontSize: 16,
-										color: Colors.textPrimary,
+										color: Colors.forest,
 										borderWidth: 1,
-										borderColor: Colors.border,
-										borderRadius: 10,
-										padding: 12,
+										borderColor: Colors.borderStrong,
+										borderRadius: 12,
+										padding: 14,
+										backgroundColor: Colors.creamDark,
 									}}
 									onSubmitEditing={handleTextSubmit}
 									returnKeyType="done"
@@ -463,14 +472,14 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 										}}
 										style={{
 											paddingHorizontal: 16,
-											paddingVertical: 8,
+											paddingVertical: 10,
 										}}
 									>
 										<Text
 											style={{
 												fontFamily: Fonts.bodySemiBold,
 												fontSize: 14,
-												color: Colors.textSecondary,
+												color: Colors.textMuted,
 											}}
 										>
 											Cancel
@@ -479,17 +488,17 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									<Pressable
 										onPress={handleTextSubmit}
 										style={{
-											backgroundColor: Colors.accent,
+											backgroundColor: Colors.sienna,
 											paddingHorizontal: 16,
-											paddingVertical: 8,
-											borderRadius: 10,
+											paddingVertical: 10,
+											borderRadius: 12,
 										}}
 									>
 										<Text
 											style={{
 												fontFamily: Fonts.displayMedium,
 												fontSize: 14,
-												color: Colors.white,
+												color: Colors.cream,
 											}}
 										>
 											Add
@@ -521,7 +530,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 							left: 0,
 							right: 0,
 							bottom: 0,
-							backgroundColor: "rgba(0,0,0,0.5)",
+							backgroundColor: "rgba(0,21,20,0.5)",
 							justifyContent: "center",
 							alignItems: "center",
 							padding: 24,
@@ -531,11 +540,13 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 					>
 						<View
 							style={{
-								backgroundColor: Colors.white,
+								backgroundColor: Colors.cream,
 								borderRadius: 24,
 								padding: 24,
 								width: "100%",
 								maxWidth: 400,
+								borderWidth: 1,
+								borderColor: Colors.border,
 							}}
 						>
 							<ColorPicker
@@ -570,7 +581,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 							<Pressable
 								onPress={() => setShowColorPicker(false)}
 								style={{
-									backgroundColor: Colors.accent,
+									backgroundColor: Colors.sienna,
 									paddingVertical: 14,
 									borderRadius: 14,
 									alignItems: "center",
@@ -580,7 +591,7 @@ export default function CanvasEditorModal({ visible, initialState, onSave, onCan
 									style={{
 										fontFamily: Fonts.displayMedium,
 										fontSize: 16,
-										color: Colors.white,
+										color: Colors.cream,
 									}}
 								>
 									Done

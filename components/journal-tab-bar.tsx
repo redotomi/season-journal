@@ -1,8 +1,22 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import * as Haptics from "expo-haptics";
 import { useCallback, useMemo } from "react";
 import { Pressable, View } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from "react-native-reanimated";
 
 import { Colors } from "@/constants/theme";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const SPRING_CONFIG = {
+	damping: 12,
+	stiffness: 200,
+	mass: 0.6,
+};
 
 export default function GlassyTabBar({
 	state,
@@ -20,6 +34,7 @@ export default function GlassyTabBar({
 			});
 
 			if (!isFocused && !event.defaultPrevented) {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 				navigation.navigate(routeName);
 			}
 		},
@@ -59,50 +74,90 @@ export default function GlassyTabBar({
 				bottom: 32,
 				left: 40,
 				right: 40,
-				backgroundColor: Colors.dark,
+				backgroundColor: Colors.forest,
 				borderRadius: 28,
 				flexDirection: "row",
 				alignItems: "center",
 				justifyContent: "space-evenly",
 				paddingVertical: 12,
-				shadowColor: "#000",
+				shadowColor: Colors.forest,
 				shadowOffset: { width: 0, height: 8 },
-				shadowOpacity: 0.15,
+				shadowOpacity: 0.3,
 				shadowRadius: 24,
 				elevation: 12,
+				borderWidth: 1,
+				borderColor: "rgba(0,21,20,0.2)",
 			}}
 		>
 			{tabs.map((tab) => (
-				<Pressable
+				<TabButton
 					key={tab.key}
-					accessibilityRole="button"
-					accessibilityState={tab.isFocused ? { selected: true } : {}}
-					onPress={() =>
-						handlePress(tab.key, tab.routeName, tab.isFocused)
-					}
-					onLongPress={() => handleLongPress(tab.key)}
-					style={{
-						width: 48,
-						height: 48,
-						borderRadius: 24,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: tab.isFocused
-							? Colors.white
-							: "transparent",
-					}}
-				>
-					{tab.icon
-						? tab.icon({
-							focused: tab.isFocused,
-							color: tab.isFocused
-								? Colors.dark
-								: "rgba(255,255,255,0.5)",
-							size: 22,
-						})
-						: null}
-				</Pressable>
+					tab={tab}
+					onPress={handlePress}
+					onLongPress={handleLongPress}
+				/>
 			))}
 		</View>
+	);
+}
+
+type TabButtonProps = {
+	tab: {
+		key: string;
+		routeName: string;
+		isFocused: boolean;
+		icon: ((props: { focused: boolean; color: string; size: number }) => React.ReactNode) | undefined;
+	};
+	onPress: (key: string, name: string, focused: boolean) => void;
+	onLongPress: (key: string) => void;
+};
+
+function TabButton({ tab, onPress, onLongPress }: TabButtonProps) {
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
+	const handlePressIn = useCallback(() => {
+		scale.value = withSpring(0.85, SPRING_CONFIG);
+	}, [scale]);
+
+	const handlePressOut = useCallback(() => {
+		scale.value = withSpring(1, SPRING_CONFIG);
+	}, [scale]);
+
+	return (
+		<AnimatedPressable
+			accessibilityRole="button"
+			accessibilityState={tab.isFocused ? { selected: true } : {}}
+			onPress={() => onPress(tab.key, tab.routeName, tab.isFocused)}
+			onLongPress={() => onLongPress(tab.key)}
+			onPressIn={handlePressIn}
+			onPressOut={handlePressOut}
+			style={[
+				{
+					width: 48,
+					height: 48,
+					borderRadius: 24,
+					alignItems: "center",
+					justifyContent: "center",
+					backgroundColor: tab.isFocused
+						? Colors.wheat
+						: "transparent",
+				},
+				animatedStyle,
+			]}
+		>
+			{tab.icon
+				? tab.icon({
+					focused: tab.isFocused,
+					color: tab.isFocused
+						? Colors.forest
+						: "rgba(251,255,254,0.5)",
+					size: 22,
+				})
+				: null}
+		</AnimatedPressable>
 	);
 }

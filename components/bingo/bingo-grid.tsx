@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 
+import { Colors } from "@/constants/theme";
 import { useBingoState } from "@/hooks/use-bingo-state";
 import BingoCell from "./bingo-cell";
 import BingoProgressBar from "./bingo-progress-bar";
@@ -69,9 +70,11 @@ export default function BingoGrid() {
 
 				<View
 					style={{
-						backgroundColor: "rgba(255,255,255,0.5)",
+						backgroundColor: "rgba(244,241,234,0.6)",
 						borderRadius: 20,
 						padding: 8,
+						borderWidth: 1,
+						borderColor: Colors.border,
 					}}
 				>
 					{rows.map((row, rowIdx) => (

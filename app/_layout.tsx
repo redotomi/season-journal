@@ -1,17 +1,12 @@
 import "../global.css";
 
 import {
-	Inter_400Regular,
-	Inter_500Medium,
-	Inter_600SemiBold,
-	Inter_700Bold,
-} from "@expo-google-fonts/inter";
-import {
-	Nunito_400Regular,
-	Nunito_500Medium,
-	Nunito_600SemiBold,
-	Nunito_700Bold,
-} from "@expo-google-fonts/nunito";
+	Rubik_300Light,
+	Rubik_400Regular,
+	Rubik_500Medium,
+	Rubik_600SemiBold,
+	Rubik_700Bold,
+} from "@expo-google-fonts/rubik";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -31,14 +26,11 @@ export const unstable_settings = {
 
 export default function RootLayout() {
 	const [fontsLoaded] = useFonts({
-		Inter_400Regular,
-		Inter_500Medium,
-		Inter_600SemiBold,
-		Inter_700Bold,
-		Nunito_400Regular,
-		Nunito_500Medium,
-		Nunito_600SemiBold,
-		Nunito_700Bold,
+		Rubik_300Light,
+		Rubik_400Regular,
+		Rubik_500Medium,
+		Rubik_600SemiBold,
+		Rubik_700Bold,
 	});
 
 	useEffect(() => {

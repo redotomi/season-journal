@@ -1,5 +1,10 @@
 import { memo } from "react";
 import { Text, View } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring
+} from "react-native-reanimated";
 
 import { Colors, Fonts } from "@/constants/theme";
 
@@ -10,6 +15,17 @@ type Props = {
 
 function BingoProgressBar({ checked, total }: Props) {
 	const pct = total > 0 ? (checked / total) * 100 : 0;
+	const animatedWidth = useSharedValue(0);
+
+	animatedWidth.value = withSpring(pct, {
+		damping: 18,
+		stiffness: 120,
+		mass: 0.8,
+	});
+
+	const fillStyle = useAnimatedStyle(() => ({
+		width: `${animatedWidth.value}%`,
+	}));
 
 	return (
 		<View style={{ marginBottom: 20 }}>
@@ -21,7 +37,8 @@ function BingoProgressBar({ checked, total }: Props) {
 					style={{
 						fontFamily: Fonts.displayMedium,
 						fontSize: 15,
-						color: Colors.textPrimary,
+						color: Colors.forest,
+						letterSpacing: -0.2,
 					}}
 				>
 					Progress
@@ -30,7 +47,7 @@ function BingoProgressBar({ checked, total }: Props) {
 					style={{
 						fontFamily: Fonts.bodySemiBold,
 						fontSize: 14,
-						color: Colors.textSecondary,
+						color: Colors.textMuted,
 					}}
 				>
 					{checked} / {total}
@@ -43,15 +60,19 @@ function BingoProgressBar({ checked, total }: Props) {
 					borderRadius: 5,
 					backgroundColor: Colors.accentSoft,
 					overflow: "hidden",
+					borderWidth: 1,
+					borderColor: Colors.border,
 				}}
 			>
-				<View
-					style={{
-						height: "100%",
-						width: `${pct}%`,
-						borderRadius: 5,
-						backgroundColor: Colors.accent,
-					}}
+				<Animated.View
+					style={[
+						{
+							height: "100%",
+							borderRadius: 5,
+							backgroundColor: Colors.wheat,
+						},
+						fillStyle,
+					]}
 				/>
 			</View>
 		</View>

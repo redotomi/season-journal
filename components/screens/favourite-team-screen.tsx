@@ -5,7 +5,6 @@ import { Colors, Fonts } from "@/constants/theme";
 import { useFavoriteTeam } from "@/hooks/queries/useFavorites";
 
 export default function FavouriteTeamScreen() {
-	// Mocking a favorite team ID - later fetch from Supabase
 	const mockFavoriteId = "red_bull";
 	const { data: team, isLoading, isError } = useFavoriteTeam(mockFavoriteId);
 
@@ -15,7 +14,7 @@ export default function FavouriteTeamScreen() {
 				className="flex-1 justify-center items-center"
 				style={{ backgroundColor: Colors.background }}
 			>
-				<ActivityIndicator size="large" color={Colors.accent} />
+				<ActivityIndicator size="large" color={Colors.wheat} />
 			</View>
 		);
 	}
@@ -26,7 +25,7 @@ export default function FavouriteTeamScreen() {
 				className="flex-1 justify-center items-center px-5"
 				style={{ backgroundColor: Colors.background }}
 			>
-				<Text style={{ fontFamily: Fonts.body, color: Colors.textSecondary }}>
+				<Text style={{ fontFamily: Fonts.body, color: Colors.textMuted }}>
 					Could not load favorite team details.
 				</Text>
 			</View>
@@ -40,13 +39,15 @@ export default function FavouriteTeamScreen() {
 		>
 			<View
 				style={{
-					backgroundColor: Colors.surfaceSolid,
+					backgroundColor: Colors.creamDark,
 					borderRadius: 24,
 					padding: 32,
 					alignItems: "center",
-					shadowColor: "#000",
+					borderWidth: 1,
+					borderColor: Colors.border,
+					shadowColor: Colors.forest,
 					shadowOffset: { width: 0, height: 4 },
-					shadowOpacity: 0.06,
+					shadowOpacity: 0.08,
 					shadowRadius: 16,
 					elevation: 4,
 				}}
@@ -55,27 +56,28 @@ export default function FavouriteTeamScreen() {
 					style={{
 						width: 72,
 						height: 72,
-						borderRadius: 18,
-						backgroundColor: "#F5ECEC",
+						borderRadius: 20,
+						backgroundColor: Colors.accentSoft,
 						alignItems: "center",
 						justifyContent: "center",
 						marginBottom: 20,
 					}}
 				>
 					<Heart
-						color={Colors.rose}
+						color={Colors.olive}
 						size={32}
 						strokeWidth={1.25}
-						fill={Colors.rose}
+						fill={Colors.olive}
 					/>
 				</View>
 
 				<Text
 					style={{
-						fontFamily: Fonts.displayMedium,
+						fontFamily: Fonts.display,
 						fontSize: 24,
-						color: Colors.textPrimary,
+						color: Colors.forest,
 						marginBottom: 8,
+						letterSpacing: -0.5,
 					}}
 				>
 					{team.name}
@@ -85,7 +87,7 @@ export default function FavouriteTeamScreen() {
 					style={{
 						fontFamily: Fonts.body,
 						fontSize: 14,
-						color: Colors.textSecondary,
+						color: Colors.textMuted,
 						textAlign: "center",
 						lineHeight: 20,
 					}}

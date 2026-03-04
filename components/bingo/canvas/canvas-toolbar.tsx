@@ -73,7 +73,7 @@ function CanvasToolbar({
 								borderWidth: selectedColor === color ? 3 : 1,
 								borderColor:
 									selectedColor === color
-										? Colors.accent
+										? Colors.wheat
 										: Colors.border,
 							}}
 						/>
@@ -84,11 +84,11 @@ function CanvasToolbar({
 							width: 32,
 							height: 32,
 							borderRadius: 16,
-							backgroundColor: Colors.surfaceSolid,
+							backgroundColor: Colors.creamDark,
 							borderWidth: 1,
 							borderColor:
 								!recentColors.includes(selectedColor)
-									? Colors.accent
+									? Colors.wheat
 									: Colors.border,
 							alignItems: "center",
 							justifyContent: "center",
@@ -97,8 +97,8 @@ function CanvasToolbar({
 						<Palette
 							color={
 								!recentColors.includes(selectedColor)
-									? Colors.accent
-									: Colors.textSecondary
+									? Colors.wheat
+									: Colors.textMuted
 							}
 							size={16}
 						/>
@@ -112,15 +112,15 @@ function CanvasToolbar({
 							width: 32,
 							height: 32,
 							borderRadius: 16,
-							backgroundColor: activeTool === "pipette" ? Colors.dark : Colors.surfaceSolid,
+							backgroundColor: activeTool === "pipette" ? Colors.forest : Colors.creamDark,
 							borderWidth: 1,
-							borderColor: activeTool === "pipette" ? Colors.dark : Colors.border,
+							borderColor: activeTool === "pipette" ? Colors.forest : Colors.border,
 							alignItems: "center",
 							justifyContent: "center",
 						}}
 					>
 						<Pipette
-							color={activeTool === "pipette" ? Colors.white : Colors.textSecondary}
+							color={activeTool === "pipette" ? Colors.cream : Colors.textMuted}
 							size={16}
 						/>
 					</Pressable>
@@ -150,7 +150,7 @@ function CanvasToolbar({
 									borderRadius: (value + 4) / 2,
 									backgroundColor:
 										selectedStrokeWidth === value
-											? Colors.textPrimary
+											? Colors.forest
 											: Colors.border,
 								}}
 							/>
@@ -173,22 +173,22 @@ function CanvasToolbar({
 							borderRadius: 14,
 							backgroundColor:
 								activeTool === mode
-									? Colors.dark
-									: Colors.surfaceSolid,
+									? Colors.forest
+									: Colors.creamDark,
 							alignItems: "center",
 							justifyContent: "center",
 							borderWidth: 1,
 							borderColor:
 								activeTool === mode
-									? Colors.dark
+									? Colors.forest
 									: Colors.border,
 						}}
 					>
 						<Icon
 							color={
 								activeTool === mode
-									? Colors.white
-									: Colors.textSecondary
+									? Colors.cream
+									: Colors.textMuted
 							}
 							size={20}
 							strokeWidth={1.5}
